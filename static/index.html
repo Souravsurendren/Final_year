@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediDoc AI - Intelligent Medical Document Analysis</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    <!-- Meta tags for SEO and social sharing -->
+    <meta name="description" content="Advanced AI-powered medical document analysis platform providing intelligent insights and compliance with medical standards.">
+    <meta name="keywords" content="medical AI, document analysis, healthcare technology, medical insights">
+    <meta name="author" content="MediDoc AI">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%230066cc'/%3E%3Cpath d='M30 50h40M50 30v40' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <div>
+                    <div>MediDoc AI</div>
+                    <div class="header-subtitle">Intelligent Medical Analysis Platform</div>
+                </div>
+            </div>
+            
+            <nav class="header-nav">
+                <div class="nav-status">
+                    <i class="fas fa-shield-check"></i>
+                    <span>HIPAA Compliant • Enterprise Ready</span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <!-- Welcome Section -->
+        <section id="welcomeSection" class="welcome-section">
+            <div class="container">
+                <div class="hero">
+                    <h1>
+                        <span class="hero-line-1">Transform Medical</span>
+                        <span class="hero-line-2">Documents into</span>
+                        <span class="hero-line-3 hero-accent">Actionable Intelligence</span>
+                    </h1>
+                    <p>
+                        Leverage cutting-edge AI to extract meaningful insights from medical documents with 
+                        precision, speed, and complete regulatory compliance. Designed for healthcare professionals 
+                        who demand excellence.
+                    </p>
+                    
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">99.7%</div>
+                            <div class="hero-stat-label">Accuracy Rate</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">&lt;30s</div>
+                            <div class="hero-stat-label">Processing Time</div>
+                        </div>
+                        <div class="hero-stat">
+                            <div class="hero-stat-number">24/7</div>
+                            <div class="hero-stat-label">Availability</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="upload-container">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-content">
+                            <div class="upload-icon">
+                                <i class="fas fa-file-medical"></i>
+                            </div>
+                            
+                            <h3>Upload Medical Document</h3>
+                            <p>Drag and drop your PDF file here, or click to browse</p>
+                            
+                            <div class="file-requirements">
+                                <span><i class="fas fa-check-circle"></i> PDF Format</span>
+                                <span><i class="fas fa-check-circle"></i> Max 50MB</span>
+                                <span><i class="fas fa-check-circle"></i> Any Language</span>
+                                <span><i class="fas fa-check-circle"></i> Secure Processing</span>
+                            </div>
+                            
+                            <button class="btn btn-primary" id="uploadBtn">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                Select Document
+                            </button>
+                            
+                            <input type="file" id="fileInput" accept=".pdf" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Features Grid -->
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h4>AI-Powered Analysis</h4>
+                        <p>Advanced machine learning algorithms extract key medical information with unprecedented accuracy and contextual understanding.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                        <h4>Hybrid Search Technology</h4>
+                        <p>Combines semantic understanding with lexical precision to retrieve the most relevant information from complex medical documents.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <h4>Medical Compliance</h4>
+                        <p>Adheres to ICMR, NMC, and NABH guidelines ensuring professional-grade analysis that meets healthcare industry standards.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Processing Section -->
+        <section id="processingSection" class="processing-section hidden">
+            <div class="container">
+                <div class="processing-card">
+                    <div class="processing-header">
+                        <i class="fas fa-cogs" id="processingIcon"></i>
+                        <h2>Analyzing Document</h2>
+                        <p>Our AI is processing your medical document with enterprise-grade precision</p>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-text" id="progressText">Initializing analysis pipeline...</div>
+                    </div>
+                    
+                    <div class="processing-steps">
+                        <div class="step" data-step="1" id="step1">
+                            <i class="fas fa-file-upload"></i>
+                            <span>Document Upload</span>
+                        </div>
+                        <div class="step" data-step="2" id="step2">
+                            <i class="fas fa-eye"></i>
+                            <span>Content Extraction</span>
+                        </div>
+                        <div class="step" data-step="3" id="step3">
+                            <i class="fas fa-cut"></i>
+                            <span>Intelligent Chunking</span>
+                        </div>
+                        <div class="step" data-step="4" id="step4">
+                            <i class="fas fa-database"></i>
+                            <span>Vector Indexing</span>
+                        </div>
+                        <div class="step" data-step="5" id="step5">
+                            <i class="fas fa-brain"></i>
+                            <span>AI Analysis</span>
+                        </div>
+                        <div class="step" data-step="6">
+                            <i class="fas fa-clipboard-check"></i>
+                            <span>Summary Generation</span>
+                        </div>
+                    </div>
+                    
+                    <div class="fun-fact" id="funFact">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Did you know? Our AI can identify medical patterns across 50+ languages and dialects.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="resultsSection" class="results-section hidden">
+            <div class="container">
+                <div class="results-header">
+                    <i class="fas fa-chart-line"></i>
+                    <h2>Analysis Complete</h2>
+                    <p>Your medical document has been successfully processed and analyzed</p>
+                </div>
+                
+                <!-- Enhanced Statistics Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number" id="chunksProcessed">0</span>
+                        <span class="stat-label">Sections Analyzed</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="processingTime">0s</span>
+                        <span class="stat-label">Processing Time</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="keyTerms">0</span>
+                        <span class="stat-label">Key Medical Terms</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="confidenceScore">0%</span>
+                        <span class="stat-label">Analysis Confidence</span>
+                    </div>
+                </div>
+                
+                <!-- Summary Container -->
+                <div class="summary-container">
+                    <div class="summary-header">
+                        <h3>
+                            <i class="fas fa-file-medical-alt"></i>
+                            Medical Document Summary
+                        </h3>
+                        <div class="compliance-badge">
+                            <i class="fas fa-shield-check"></i>
+                            Medical Standards Compliant
+                        </div>
+                    </div>
+                    
+                    <div class="summary-content" id="summaryContent">
+                        <!-- Summary will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="downloadSummary()" id="downloadBtn">
+                        <i class="fas fa-download"></i>
+                        Download Report
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetAnalysis()" id="newAnalysisBtn">
+                        <i class="fas fa-plus-circle"></i>
+                        Analyze Another Document
+                    </button>
+                    <button class="btn btn-secondary" onclick="shareSummary()">
+                        <i class="fas fa-share-alt"></i>
+                        Share Securely
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Error Section -->
+        <section id="errorSection" class="error-section hidden">
+            <div class="container">
+                <div class="error-card">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h2>Processing Error</h2>
+                    <p id="errorMessage">We encountered an issue while processing your document. Please try again.</p>
+                    <button class="btn btn-primary" onclick="resetAnalysis()" id="retryBtn">
+                        <i class="fas fa-redo"></i>
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Enhanced Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About MediDoc AI</h4>
+                    <p>
+                        A cutting-edge medical document analysis platform powered by advanced artificial intelligence. 
+                        We transform complex medical information into actionable insights while maintaining the highest 
+                        standards of security and compliance.
+                    </p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Key Features</h4>
+                    <ul>
+                        <li><i class="fas fa-check"></i> AI-Powered Document Analysis</li>
+                        <li><i class="fas fa-check"></i> HIPAA & Medical Compliance</li>
+                        <li><i class="fas fa-check"></i> Multi-Language Support</li>
+                        <li><i class="fas fa-check"></i> Real-Time Processing</li>
+                        <li><i class="fas fa-check"></i> Secure Cloud Infrastructure</li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Compliance & Security</h4>
+                    <ul>
+                        <li><i class="fas fa-shield-check"></i> ICMR Guidelines Compliant</li>
+                        <li><i class="fas fa-shield-check"></i> NMC Standards Adherent</li>
+                        <li><i class="fas fa-shield-check"></i> NABH Quality Assured</li>
+                        <li><i class="fas fa-shield-check"></i> HIPAA Compliant Processing</li>
+                        <li><i class="fas fa-shield-check"></i> End-to-End Encryption</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 MediDoc AI. Advancing Healthcare Through Intelligent Technology.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="/static/js/app.js?v=3"></script>
+</body>
+</html>
