@@ -1,0 +1,47 @@
+{
+  "rouge_scores": {
+    "rouge1": {
+      "precision": 0.6375,
+      "recall": 0.53125,
+      "f1": 0.5795454545454545
+    },
+    "rouge2": {
+      "precision": 0.3037974683544304,
+      "recall": 0.25263157894736843,
+      "f1": 0.2758620689655173
+    },
+    "rougeL": {
+      "precision": 0.5625,
+      "recall": 0.46875,
+      "f1": 0.5113636363636364
+    }
+  },
+  "bleu_scores": {
+    "bleu_1": 0.5823,
+    "bleu_2": 0.4415,
+    "bleu_3": 0.3578,
+    "bleu_4": 0.2934,
+    "sacrebleu": 0.2923
+  },
+  "medical_metrics": {
+    "medical_recall": 0.5,
+    "medical_precision": 0.6667,
+    "medical_f1": 0.5714,
+    "anatomical_recall": 0.5,
+    "symptoms_recall": 1.0,
+    "procedures_recall": 0.0,
+    "medications_recall": 1.0,
+    "conditions_recall": 1.0
+  },
+  "summary_stats": {
+    "ref_length": 745,
+    "hyp_length": 689,
+    "ref_sentences": 11,
+    "hyp_sentences": 11,
+    "ref_words": 111,
+    "hyp_words": 101,
+    "length_ratio": 0.9248,
+    "compression_ratio": 0.9248
+  },
+  "timestamp": "2025-10-24T22:09:59"
+}

@@ -1,0 +1,18 @@
+{
+  "ts": "2025-12-02T17:20:22.703972Z",
+  "query": "What is the patient's condition?",
+  "candidates": [
+    "c_afa4d72c1a7b",
+    "c_13a5099458ec",
+    "c_3224241b61a0",
+    "c_53b86959c82c",
+    "c_9ab4301ca66c",
+    "c_0dabedd11a44",
+    "c_0e9309d81ce6",
+    "c_88246dbb44dc",
+    "c_f64dbc7db5a8",
+    "c_45d42685979a",
+    "c_7fbe8ee38b9d",
+    "c_d8361a962bcc"
+  ]
+}

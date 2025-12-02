@@ -1,0 +1,28 @@
+{
+  "rouge_scores": {
+    "rouge1": {
+      "precision": 0.6375,
+      "recall": 0.53125,
+      "f1": 0.5795454545454545
+    },
+    "rouge2": {
+      "precision": 0.3037974683544304,
+      "recall": 0.25263157894736843,
+      "f1": 0.2758620689655173
+    },
+    "rougeL": {
+      "precision": 0.5625,
+      "recall": 0.46875,
+      "f1": 0.5113636363636364
+    }
+  },
+  "bleu_scores": {
+    "bleu_1": 0.0,
+    "bleu_2": 0.0,
+    "bleu_3": 0.0,
+    "bleu_4": 0.0
+  },
+  "medical_metrics": {},
+  "summary_stats": {},
+  "timestamp": "2025-10-24T21:59:44"
+}

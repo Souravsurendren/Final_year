@@ -1,7 +1,7 @@
 [
   {
-    "chunk_id": "c_771b55dacddc",
-    "page_id": "p_23101b7f4a36",
+    "chunk_id": "c_45b8604d5158",
+    "page_id": "p_dadc720fd301",
     "page_index": 1,
     "order": 0,
     "text": "- 1 - \n \nSAMPLE \n(All names and details provided in this sample are fictitious.  \nSome fields have been deliberately left blank.) \n \n \nMEDICAL REPORT \n \nSECTION 1: PATIENT’S PARTICULARS \n \nFull name of patient: Mr Tan Ah Kow \n \nNRIC/FIN/Passport no. of patient: S1111111X \n \nAge of patient: 55 years old \n \nSECTION 2: DOCTOR’S PARTICULARS \n \nFull name of doctor: Tan Ah Moi \n \nNRIC/FIN/Passport no. of doctor: S2222222Z  \n \n \nMCR no. of doctor: 333333 \n \nHospital / Clinic name and address: 1 Blackacre Hospital, Singapore 01010101 \n \n \n \nDoctor’s qualifications and experience in this area of work: \n \n \n[To set out details]",
@@ -9,8 +9,8 @@
     "end_char": 625
   },
   {
-    "chunk_id": "c_79706e780c03",
-    "page_id": "p_c1c81af49a23",
+    "chunk_id": "c_31c5b78aa783",
+    "page_id": "p_c843a9f937a4",
     "page_index": 2,
     "order": 1,
     "text": "- 2 - \n \n \nDoctor-patient relationship: \n \nPlease state if you have been seeing the patient regularly over a period of time (if so, \nplease state when you first started seeing the patient and how often you see the \npatient) or if you saw the patient specifically for this mental capacity assessment only. \n \n \nI have been the doctor in charge of Mr Tan Ah Kow since November 2010. I have \nseen Mr Tan regularly since then, on average once or twice a year. For purposes of \nthis medical report, I re-examined Mr Tan on 20 June 2015. \n \n \n \n \n \n \n \n \n \nSECTION 3: PATIENT’S MEDICAL INFORMATION \n \n \nPatient’s clinical history: \n \nPlease also state the source of the information (e.g. from medical records, from the \npatient, from the applicant etc.). \n \nMr Tan Ah Kow was accompanied by his son, Mr Tan Ah Beng, for the examination. \nMr Tan is a 55 year old man, who is divorced, and unemployed. Mr Tan is currently \nliving with his son, Ah Beng, in Ah Beng’s flat. Mr Tan Ah Beng informed me that \nMr Tan Ah Kow used to work as a cleaner. \n \nMr Tan Ah Kow has a history of medical conditions. He has had hypertension and",
@@ -18,8 +18,8 @@
     "end_char": 1119
   },
   {
-    "chunk_id": "c_832231bba441",
-    "page_id": "p_c1c81af49a23",
+    "chunk_id": "c_e127b4b23762",
+    "page_id": "p_c843a9f937a4",
     "page_index": 2,
     "order": 2,
     "text": "Mr Tan Ah Kow used to work as a cleaner. \n \nMr Tan Ah Kow has a history of medical conditions. He has had hypertension and \nhyperlipidemia since 1990 and suffered several strokes in 2005. He subsequently \ndeveloped heart problems (cardiomyopathy), cardiac failure and chronic renal disease \nand was treated in ABC Hospital. \n \nHe was last admitted to the ABC Hospital on 1 April 2010 till 15 April 2010, during \nwhich he was diagnosed to have suffered from a stroke. This was confirmed by CT \nand MRI brain scans.  \n \nThereafter, he was transferred to XYZ Hospital for stroke rehabilitation on 15 April \n2010.  \n \nAfter that, Mr Tan was referred to Blackacre Hospital for follow-up treatment from in \nNovember 2010. The clinical impression was that he was manifesting behavioural and \npsychological symptoms secondary to Dementia.",
@@ -27,8 +27,8 @@
     "end_char": 1119
   },
   {
-    "chunk_id": "c_6fa1c90c5ba2",
-    "page_id": "p_125ec51d7c79",
+    "chunk_id": "c_8c055203312f",
+    "page_id": "p_389415764713",
     "page_index": 3,
     "order": 3,
     "text": "- 3 - \n \nThe clinical impression was that he was manifesting behavioural and psychological \nsymptoms secondary to Dementia. \n \nI was informed by Mr Tan Ah Beng that Mr Tan is at present incontinent, and is \nunable to bathe or use the toilet on his own. He is, however, able to feed himself. \n \nI have observed a gradual deterioration in his cognitive ability and physical state over \nthe years. \n \n \n \nFindings from physical examination / mental state examination: \n \nPlease state your observations of the patient (i.e. the patient’s demeanour, body \nlanguage, tone of voice etc. relevant to your assessment), the interactions you had \nwith the patient/the tests you administered/the questions you posed, and the date you \nexamined the patient.  \n \nMr Tan was brought to the clinic in a wheel chair. His mood was euthymic (i.e. \nnormal, non-depressed and reasonably positive mood) and he did not have any \npsychotic symptoms.  \n \nOrientation to time, place and person \n \nWith regard to his orientation to time, place and person, he was unable to tell that he \nwas in a hospital clinic but identified his son and was able to tell his own name and",
@@ -36,8 +36,8 @@
     "end_char": 1145
   },
   {
-    "chunk_id": "c_b64a2552c52a",
-    "page_id": "p_125ec51d7c79",
+    "chunk_id": "c_2d41f1dc56e1",
+    "page_id": "p_389415764713",
     "page_index": 3,
     "order": 4,
     "text": "was in a hospital clinic but identified his son and was able to tell his own name and \nthe name of his son. After being told he was in a hospital clinic, he identified me as a \ndoctor, when asked. However, he could not remember my name, although I have been \ntreating him for the last 5 years. He was able to tell correctly how he arrived at the \nclinic. However, when asked some moments later where he was, he said he did not \nknow.  \n \nHe said that it was 10 February (actual date 20 June) and it was a Wednesday (actual \nday, Monday). He appeared to be just guessing as to what date and day it was. After \nbeing told what the day and date were, he forgot a few moments later after being \nasked again. He could not answer when asked what year it was. \n \nWhen asked what time it was, he said that it was 5pm in the afternoon (actual time, \n3pm). He was not able to tell the time from looking at a watch.  \n \nBasic information \n \nHe gave his age as 50 years old (actually 55 years) and could not answer when asked \nwhen his birthday was. He correctly said he lived in a flat with his son, but could not \ngive the correct address, and also got the area wrong (he said the flat was in Bedok,",
@@ -45,8 +45,8 @@
     "end_char": 1145
   },
   {
-    "chunk_id": "c_6254a180d617",
-    "page_id": "p_125ec51d7c79",
+    "chunk_id": "c_a166a243b91d",
+    "page_id": "p_389415764713",
     "page_index": 3,
     "order": 5,
     "text": "give the correct address, and also got the area wrong (he said the flat was in Bedok, \nwhen it was actually in Jurong.) He incorrectly stated that the Prime Minister was Lee \nKuan Yew.",
@@ -54,8 +54,8 @@
     "end_char": 2348
   },
   {
-    "chunk_id": "c_f3e3485adeb1",
-    "page_id": "p_b87d0e168892",
+    "chunk_id": "c_8851133bac96",
+    "page_id": "p_052da4f5979d",
     "page_index": 4,
     "order": 6,
     "text": "- 4 - \n \n \nSimple arithmetic, financial issues \n \nMr Tan was unable to perform simple arithmetic such as 4 plus 3, giving 8 as the \nanswer, and could not subtract 7 from 10. He could not count backwards from 20 to 1. \nHe was unable to recognise notes or coins (he identified a 50-cent coin as 20 cents \nand a 10-dollar note as 2 dollars). \n \nPersonal welfare/property and affairs related questions \n \nI asked Mr Tan if he owned any property. Mr Tan said he did. I asked him if he was \nthe sole owner. He said yes. (However, Mr Tan Ah Beng informed me that Mr Tan \nowned the flat together with his (Mr Tan’s) elderly mother, in joint names, and that \nthe elderly mother was currently living in the flat by herself.) I asked Mr Tan what the \naddress of the flat was. He said he could not remember. I asked how many rooms the \nflat had, and he said it was a 4-room flat. (However, Mr Tan Ah Beng said it was a 3-\nroom flat.) I asked Mr Tan what he wanted to do with the flat, since he was not \nstaying there. He said that he wanted to rent it out. I asked him whether he planned to \nrent out the whole flat. Mr Tan said yes (even though his elderly mother was still",
@@ -63,8 +63,8 @@
     "end_char": 1162
   },
   {
-    "chunk_id": "c_3632c50286b8",
-    "page_id": "p_b87d0e168892",
+    "chunk_id": "c_014cad5e2cd2",
+    "page_id": "p_052da4f5979d",
     "page_index": 4,
     "order": 7,
     "text": "rent out the whole flat. Mr Tan said yes (even though his elderly mother was still \nliving there.) I asked him how much rent he planned to charge, Mr Tan said he did not \nknow, and that he was not good at money matters.  \n \nI asked him whether he knew what medical problems he had. Mr Tan just stared at me \nblankly and shook his head. I asked him whether he remembered being in hospital \nbefore. Mr Tan nodded. I asked him if he knew what he was in hospital for. Mr Tan \nshook his head. I asked him if he was taking any medicine at the moment. Mr Tan just \nlooked at me blankly and did not reply. \n \nDate of physical examination/mental state examination: 20 June 2015 \n \n \nRelevant investigation results: \n \n[Results of CT brain, MRI brain scan and other investigations to be stated.]",
@@ -72,8 +72,8 @@
     "end_char": 1162
   },
   {
-    "chunk_id": "c_a7a75eae57c6",
-    "page_id": "p_518b1f83c2a6",
+    "chunk_id": "c_22265b60d772",
+    "page_id": "p_7f8bbd942ccc",
     "page_index": 5,
     "order": 8,
     "text": "- 5 - \n \nDiagnosis: \n1. Dementia  \n2. Stroke \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nSECTION 4: OPINION ON PATIENT’S MENTAL CAPACITY \n \nOPINION ON PATIENT’S MENTAL CAPACITY IN RELATION TO \nPERSONAL WELFARE \n \nIn your opinion, can the patient understand information relevant to a decision \nrelating to his or her personal welfare? \n \n Yes \n No \n \nIn your opinion, can the patient retain information long enough to make a \ndecision relating to his or her personal welfare? \n \n Yes            No \n \nIn your opinion, can the patient weigh information as part of the process of",
@@ -81,8 +81,8 @@
     "end_char": 571
   },
   {
-    "chunk_id": "c_776d87724506",
-    "page_id": "p_d80ade704c34",
+    "chunk_id": "c_649c2b15bcad",
+    "page_id": "p_efafaf8338d1",
     "page_index": 6,
     "order": 9,
     "text": "- 6 - \n \nmaking a decision relating to his or her personal welfare? \n \n Yes \n No \n \nIn your opinion, can the patient communicate his or her decision relating to his \nor her personal welfare? \n \nYes            No              \n \n \nTaking into consideration the above, in your opinion, does the patient have \nmental capacity in respect of personal welfare? \n \n Yes \n  No \n \n \nOPINION ON PATIENT’S MENTAL CAPACITY IN RELATION TO \nPROPERTY AND AFFAIRS \n \nIn your opinion, can the patient understand information relevant to a decision \nrelating to his or her property and affairs? \n \n Yes \n No \n \nIn your opinion, can the patient retain information long enough to make a \ndecision relating to his or her property and affairs? \n \n Yes \n No \n \nIn your opinion, can the patient weigh information as part of the process of \nmaking a decision relating to his or her property and affairs? \n \n Yes \n No \n \nIn your opinion, can the patient communicate his or her decision relating to his \nor her property and affairs? \n \nYes \nNo \n \nTaking into consideration the above, in your opinion, does the patient have \nmental capacity in respect of property and affairs? \n \n Yes \nNo",
@@ -90,8 +90,8 @@
     "end_char": 1175
   },
   {
-    "chunk_id": "c_757c7c2f1658",
-    "page_id": "p_7543cbe7354d",
+    "chunk_id": "c_d2e4f6437ec2",
+    "page_id": "p_62e663521594",
     "page_index": 7,
     "order": 10,
     "text": "- 7 - \n \n \nPlease state the basis of your opinion above in respect of the patient’s mental \ncapacity: \n \nMr Tan’s dementia and stroke have impaired the functioning of his mind and brain. \nHis failure to remember where he was (i.e. in the hospital) and the day and date, \ndespite being told a short while ago, shows his inability to retain information.  He was \nalso not able to remember basic information such as his age, and the address where he \nlives. \n \nHis failure to tell the time from a watch or to recognize notes and coins shows his \ninability to understand simple information.  \n \nHe could not do basic arithmetic, which shows that he is not able to weigh and use \ninformation.  \n \nSince he is unable to understand, retain, use or weigh simple information, due to his \nmemory deficits and cognitive failures, he will not be able to make decisions about \nhis personal and financial affairs, which would require being able to process such \ninformation. This is also demonstrated by his inability to remember basic information \non the property he owns with his elderly mother, and also his inability to make a",
@@ -99,8 +99,8 @@
     "end_char": 1116
   },
   {
-    "chunk_id": "c_ca2ec4e61c52",
-    "page_id": "p_7543cbe7354d",
+    "chunk_id": "c_031d56ebfc35",
+    "page_id": "p_62e663521594",
     "page_index": 7,
     "order": 11,
     "text": "on the property he owns with his elderly mother, and also his inability to make a \nrealistic and concrete plan for what to do with the property. He was also not able to \nremember what medical problems he has, and not able to answer a question as to \nwhether he is currently on medication. \n \nIn my view, his cognitive functions are unlikely to improve and would most likely get \nworse over time, as there is no treatment which can reverse his dementia.",
@@ -108,8 +108,8 @@
     "end_char": 1116
   },
   {
-    "chunk_id": "c_5510ca33845a",
-    "page_id": "p_3278e8dcedb6",
+    "chunk_id": "c_31987016c726",
+    "page_id": "p_143cae10cece",
     "page_index": 8,
     "order": 12,
     "text": "- 8 - \n \n \n \n \nAre you aware of any other doctor who holds a different professional opinion \nregarding the patient’s mental capacity? If so, please provide details: \n \n \nNo. \n \n \n \n \n \n \n \nPROGNOSIS \n \nIn your opinion, is the patient likely to regain mental capacity? \n \n Yes \n No         Not Sure \n \nIf “Yes” or “Not Sure”, please suggest when another assessment of the patient’s \nmental capacity should be carried out: \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \nIn your opinion, would the patient understand if he/she were to be informed of \nthis application? \n Yes             No",
@@ -117,8 +117,8 @@
     "end_char": 591
   },
   {
-    "chunk_id": "c_93dc250e12d8",
-    "page_id": "p_b45a0920e91b",
+    "chunk_id": "c_09dbfb0524da",
+    "page_id": "p_9a273b95c511",
     "page_index": 9,
     "order": 13,
     "text": "- 9 - \n \n \nSECTION 5: DECLARATION \n \n \nI have read and understood the provisions in sections 3, 4 and 5 of the Mental \nCapacity Act. \n \nI believe in the correctness of the opinion set out herein. \n \nI understand that in giving this report my duty is to the Court and I confirm that \nI have complied with this duty. \n \n \n \n \n \n \nSignature: \n_[Doctor to sign]_________ \n \nName: \n______Dr Tan Ah Moi____ \n \nDate: \n______20 July 2015________ \n \n \nExplanatory notes: \n \n1. \n“Personal welfare” refers to matters such as deciding where to live and consenting to medical and \ndental treatment. \n \n2. \n“Property and affairs”, as the name implies, refers to matters concerning the patient’s financial \naffairs and property.  \n \n3. \nWhen giving your opinion on the patient’s mental capacity, please note that where it is not patently \nobvious from the clinical history and examination that the patient has or lacks capacity, you will \nneed to explain the basis for your opinion.  \n \n \nSection 3 of the Mental Capacity Act \n \n(1) \nThe following principles apply for the purposes of this Act.  \n \n(2) \nA person must be assumed to have capacity unless it is established that he lacks capacity.  \n \n(3)",
@@ -126,8 +126,8 @@
     "end_char": 1187
   },
   {
-    "chunk_id": "c_a830a150dbc5",
-    "page_id": "p_b45a0920e91b",
+    "chunk_id": "c_ea6bd6a8e2ce",
+    "page_id": "p_9a273b95c511",
     "page_index": 9,
     "order": 14,
     "text": "(2) \nA person must be assumed to have capacity unless it is established that he lacks capacity.  \n \n(3) \nA person is not to be treated as unable to make a decision unless all practicable steps to help him to \ndo so have been taken without success.  \n \n(4) \nA person is not to be treated as unable to make a decision merely because he makes an unwise \ndecision.  \n \n(5) \nAn act done, or a decision made, under this Act for or on behalf of a person who lacks capacity must \nbe done, or made, in his best interests.  \n \n(6) \nBefore the act is done, or the decision is made, regard must be had to whether the purpose for which \nit is needed can be as effectively achieved in a way that is less restrictive of the person’s rights and \nfreedom of action.  \n \n \nSection 4 of the Mental Capacity Act \n \n(1) \nFor the purposes of this Act, a person lacks capacity in relation to a matter if at the material time he \nis unable to make a decision for himself in relation to the matter because of an impairment of, or a",
@@ -135,8 +135,8 @@
     "end_char": 1187
   },
   {
-    "chunk_id": "c_0126218c085e",
-    "page_id": "p_daecd130c27d",
+    "chunk_id": "c_42e121042131",
+    "page_id": "p_cd4f768deba0",
     "page_index": 10,
     "order": 15,
     "text": "- 10 - \n \ndisturbance in the functioning of, the mind or brain. \n \n(2) \nIt does not matter whether the impairment or disturbance is permanent or temporary.  \n \n(3) \nA lack of capacity cannot be established merely by reference to —  \n \n(a) \na person’s age or appearance; or  \n \n(b) \na condition of his, or an aspect of his behaviour, which might lead others to make unjustified \nassumptions about his capacity. \n \n(4) \nIn proceedings under this Act (other than proceedings for offences under this Act), any question \nwhether a person lacks capacity within the meaning of this Act must be decided on the balance of \nprobabilities. \n \n(5) \nSubject to section 21, no power which a person (“D”) may exercise under this Act — \n \n(a) \nin relation to a person who lacks capacity; or  \n(b) \nwhere D reasonably thinks that a person lacks capacity,  \n \nis exercisable in relation to a person below 21 years of age. \n \n \nSection 5 of the Mental Capacity Act \n \n(1) \nFor the purposes of section 4, a person is unable to make a decision for himself if he is unable— \n \n(a) \nto understand the information relevant to the decision; \n(b) \nto retain that information; \n(c)",
@@ -144,8 +144,8 @@
     "end_char": 1154
   },
   {
-    "chunk_id": "c_61360e228cd4",
-    "page_id": "p_daecd130c27d",
+    "chunk_id": "c_e5e3c55cfc08",
+    "page_id": "p_cd4f768deba0",
     "page_index": 10,
     "order": 16,
     "text": "(a) \nto understand the information relevant to the decision; \n(b) \nto retain that information; \n(c) \nto use or weigh that information as part of the process of making the decision; or  \n(d) \nto communicate his decision (whether by talking, using sign language or any other means). \n \n(2) \nA person is not to be regarded as unable to understand the information relevant to a decision if he is \nable to understand an explanation of it given to him in a way that is appropriate to his \ncircumstances (using simple language, visual aids or any other means).  \n \n(3) \nThe fact that a person is able to retain the information relevant to a decision for a short period only \ndoes not prevent him from being regarded as able to make the decision.  \n \n(4) \nThe information relevant to a decision includes information about the reasonably foreseeable \nconsequences of — \n \n(a) \ndeciding one way or another; or \n(b) \nfailing to make the decision.",

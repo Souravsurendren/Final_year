@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,6 +8,8 @@ import os
 from pathlib import Path
 import asyncio
 import json
+from datetime import datetime
+from typing import Optional
 
 # Import your existing modules
 from .pdf_parser import extract_text_pages
@@ -16,10 +18,11 @@ from .indexer import build_faiss_index
 from .bm25_search import build_bm25
 from .retrieval import hybrid_search
 from .summarizer import map_reduce_summarize
+from .extractive_summarizer import extractive_summarize
 from .utils import write_json
 from .config import FAISS_DIR, META_DIR
 
-app = FastAPI(title="MedRAG Enterprise API", version="1.0.0")
+app = FastAPI(title="MedRAG Open Source API", version="2.0.0", description="Open source medical document analysis platform")
 
 # Enable CORS for frontend communication
 app.add_middleware(
@@ -43,9 +46,14 @@ async def read_root():
         return HTMLResponse(content="<h1>Frontend not found</h1>", status_code=404)
 
 @app.post("/upload")
-async def upload_and_analyze(file: UploadFile = File(...)):
+async def upload_and_analyze(
+    file: UploadFile = File(...), 
+    summary_type: str = Form(default="abstractive")
+):
     """
     Handle PDF upload and return summarization
+    Supports both extractive and abstractive summarization
+    Open source - no authentication required
     """
     import traceback
     
@@ -61,7 +69,7 @@ async def upload_and_analyze(file: UploadFile = File(...)):
             tmp_path = tmp_file.name
 
         try:
-            # Process the PDF (same logic as Streamlit but simplified)
+            # Process the PDF
             
             # 1. Extract pages
             print("Step 1: Extracting pages...")
@@ -101,20 +109,32 @@ async def upload_and_analyze(file: UploadFile = File(...)):
                 retrieved.extend([c for c in chunks if c["chunk_id"] in missing_ids])
                 print(f"Added {len(missing_ids)} missing chunks")
             
-            # 6. Generate summary
-            print("Step 6: Generating summary...")
-            summary = map_reduce_summarize(retrieved)
-            print("Summary generated successfully")
+            # 6. Generate summary based on type
+            print(f"Step 6: Generating {summary_type} summary...")
+            
+            if summary_type.lower() == "extractive":
+                # Use extractive summarization
+                summary = extractive_summarize(retrieved, num_sentences=12)
+                summary_method = "Extractive"
+            else:
+                # Use abstractive summarization (default)
+                summary = map_reduce_summarize(retrieved)
+                summary_method = "Abstractive"
+            
+            print(f"{summary_method} summary generated successfully")
             
             # Return results
             return JSONResponse(content={
                 "success": True,
                 "summary": summary,
+                "summary_type": summary_method,
                 "stats": {
                     "pages": len(pages),
                     "chunks": len(chunks),
-                    "characters": sum(len(c['text']) for c in chunks)
-                }
+                    "characters": sum(len(c['text']) for c in chunks),
+                    "method": summary_method
+                },
+                "message": "Analysis complete! No authentication required - unlimited use available."
             })
             
         finally:
@@ -131,13 +151,65 @@ async def upload_and_analyze(file: UploadFile = File(...)):
         print(f"Error in upload endpoint: {error_details}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
+@app.post("/search")
+async def search_endpoint(payload: dict):
+    """Search endpoint used by frontend. Expects JSON {"query": "..."} and returns matching chunks."""
+    try:
+        query = payload.get('query', '').strip()
+        if not query:
+            raise HTTPException(status_code=400, detail="Query is required")
+
+        results = hybrid_search(query, str(META_DIR))
+
+        # Ensure results are JSON serializable (they should be dicts loaded from metadata)
+        return JSONResponse(content={"results": results})
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Search error: {e}")
+        raise HTTPException(status_code=500, detail="Search failed")
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
-    return {"status": "healthy", "service": "MedRAG Enterprise API"}
+    return {
+        "status": "healthy", 
+        "service": "MedRAG Open Source API",
+        "version": "2.0.0",
+        "features": {
+            "authentication": False,
+            "usage_limits": False,
+            "open_source": True,
+            "unlimited_uploads": True
+        }
+    }
+
+@app.get("/info")
+async def app_info():
+    """Application information endpoint"""
+    return {
+        "name": "MedAnalyzer Pro - Open Source Edition",
+        "version": "2.0.0",
+        "description": "Open source medical document analysis platform with unlimited usage",
+        "features": [
+            "PDF document upload and analysis",
+            "AI-powered medical text summarization",
+            "Hybrid search (BM25 + semantic)",
+            "Extractive and abstractive summarization",
+            "Export functionality",
+            "No authentication required",
+            "Unlimited document processing"
+        ],
+        "endpoints": {
+            "/": "Main application interface",
+            "/upload": "Upload and analyze medical documents",
+            "/search": "Search through analyzed documents",
+            "/health": "Health check",
+            "/info": "Application information"
+        },
+        "license": "Open Source",
+        "github": "https://github.com/your-repo/medanalyzer"
+    }
 
 if __name__ == "__main__":
-    # Create static directory if it doesn't exist
-    Path("static").mkdir(exist_ok=True)
-    
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(app, host="0.0.0.0", port=8000)

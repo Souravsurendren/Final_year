@@ -1,0 +1,116 @@
+{
+  "summary": "**Key Medical Information:**\n1. Date of physical examination/mental state examination: 20 June 2015 Relevant investigation results: [Results of CT brain, MRI brain scan and other investigations to be stated\n2. (3) A lack of capacity cannot be established merely by reference to — (a) a person’s age or appearance; or (b) a condition of his, or an aspect of his behaviour, which might lead others to make unjustified assumptions about his capacity\n3. He was also not able to remember what medical problems he has, and not able to answer a question as to whether he is currently on medication\n4. After that, Mr Tan was referred to Blackacre Hospital for follow-up treatment from in November 2010\n5. The clinical impression was that he was manifesting behavioural and psychological symptoms secondary to Dementia\n6. - 3 - The clinical impression was that he was manifesting behavioural and psychological symptoms secondary to Dementia\n7. Findings from physical examination / mental state examination: Please state your observations of the patient (i\n8. relevant to your assessment), the interactions you had with the patient/the tests you administered/the questions you posed, and the date you examined the patient\n9. normal, non-depressed and reasonably positive mood) and he did not have any psychotic symptoms\n\n**Clinical Findings & Details:**\n1. of doctor: 333333 Hospital / Clinic name and address: 1 Blackacre Hospital, Singapore 01010101 Doctor’s qualifications and experience in this area of work: [To set out details] - 9 - SECTION 5: DECLARATION I have read and understood the provisions in sections 3, 4 and 5 of the Mental Capacity Act\n2. When giving your opinion on the patient’s mental capacity, please note that where it is not patently obvious from the clinical history and examination that the patient has or lacks capacity, you will need to explain the basis for your opinion\n3. Orientation to time, place and person With regard to his orientation to time, place and person, he was unable to tell that he was in a hospital clinic but identified his son and was able to tell his own name and give the correct address, and also got the area wrong (he said the flat was in Bedok, when it was actually in Jurong\n\n---\n**Summary Type:** Extractive\n**Sentences Extracted:** 12\n**High Priority:** 9 sentences\n**Medium Priority:** 3 sentences\n**Low Priority:** 0 sentences",
+  "extracted_sentences": [
+    {
+      "sentence": "of doctor: 333333 Hospital / Clinic name and address: 1 Blackacre Hospital, Singapore 01010101 Doctor’s qualifications and experience in this area of work: [To set out details] - 9 - SECTION 5: DECLARATION I have read and understood the provisions in sections 3, 4 and 5 of the Mental Capacity Act",
+      "score": 0.6246552178164957,
+      "medical_score": 1.0,
+      "tfidf_score": 0.9571235974281861,
+      "centrality_score": 0.8669816255569458,
+      "position_score": 0.9590163934426229,
+      "order": 5
+    },
+    {
+      "sentence": "When giving your opinion on the patient’s mental capacity, please note that where it is not patently obvious from the clinical history and examination that the patient has or lacks capacity, you will need to explain the basis for your opinion",
+      "score": 0.6340048710277585,
+      "medical_score": 1.0,
+      "tfidf_score": 0.881937893151888,
+      "centrality_score": 0.9992380738258362,
+      "position_score": 0.9098360655737705,
+      "order": 11
+    },
+    {
+      "sentence": "Date of physical examination/mental state examination: 20 June 2015 Relevant investigation results: [Results of CT brain, MRI brain scan and other investigations to be stated",
+      "score": 0.890609086061643,
+      "medical_score": 5.5,
+      "tfidf_score": 0.9157566567756629,
+      "centrality_score": 0.8466796875,
+      "position_score": 0.5,
+      "order": 59
+    },
+    {
+      "sentence": "(3) A lack of capacity cannot be established merely by reference to — (a) a person’s age or appearance; or (b) a condition of his, or an aspect of his behaviour, which might lead others to make unjustified assumptions about his capacity",
+      "score": 0.6710634903064072,
+      "medical_score": 3.0,
+      "tfidf_score": 0.8142861332278163,
+      "centrality_score": 0.7972405552864075,
+      "position_score": 0.5,
+      "order": 62
+    },
+    {
+      "sentence": "He was also not able to remember what medical problems he has, and not able to answer a question as to whether he is currently on medication",
+      "score": 0.6159549843870191,
+      "medical_score": 2.0,
+      "tfidf_score": 0.6045227127726611,
+      "centrality_score": 0.9955118298530579,
+      "position_score": 0.7049180327868853,
+      "order": 86
+    },
+    {
+      "sentence": "After that, Mr Tan was referred to Blackacre Hospital for follow-up treatment from in November 2010",
+      "score": 0.6135274359285611,
+      "medical_score": 3.0,
+      "tfidf_score": 0.5948836367368019,
+      "centrality_score": 0.6651873588562012,
+      "position_score": 0.8032786885245902,
+      "order": 98
+    },
+    {
+      "sentence": "The clinical impression was that he was manifesting behavioural and psychological symptoms secondary to Dementia",
+      "score": 0.6782354422320112,
+      "medical_score": 3.0,
+      "tfidf_score": 0.6103715775939504,
+      "centrality_score": 0.9052527546882629,
+      "position_score": 0.8114754098360656,
+      "order": 99
+    },
+    {
+      "sentence": "- 3 - The clinical impression was that he was manifesting behavioural and psychological symptoms secondary to Dementia",
+      "score": 0.6748037236675868,
+      "medical_score": 3.0,
+      "tfidf_score": 0.6103715775939504,
+      "centrality_score": 0.8882471919059753,
+      "position_score": 0.819672131147541,
+      "order": 100
+    },
+    {
+      "sentence": "Findings from physical examination / mental state examination: Please state your observations of the patient (i",
+      "score": 0.6308544796735491,
+      "medical_score": 2.5,
+      "tfidf_score": 0.5669825210803181,
+      "centrality_score": 0.8881790637969971,
+      "position_score": 0.8524590163934427,
+      "order": 104
+    },
+    {
+      "sentence": "relevant to your assessment), the interactions you had with the patient/the tests you administered/the questions you posed, and the date you examined the patient",
+      "score": 0.7325846444383131,
+      "medical_score": 4.0,
+      "tfidf_score": 0.6274522246988158,
+      "centrality_score": 0.7917090058326721,
+      "position_score": 0.8688524590163934,
+      "order": 106
+    },
+    {
+      "sentence": "normal, non-depressed and reasonably positive mood) and he did not have any psychotic symptoms",
+      "score": 0.6371195060606092,
+      "medical_score": 3.0,
+      "tfidf_score": 0.6490971668396872,
+      "centrality_score": 0.6692765355110168,
+      "position_score": 0.8934426229508197,
+      "order": 109
+    },
+    {
+      "sentence": "Orientation to time, place and person With regard to his orientation to time, place and person, he was unable to tell that he was in a hospital clinic but identified his son and was able to tell his own name and give the correct address, and also got the area wrong (he said the flat was in Bedok, when it was actually in Jurong",
+      "score": 0.6343666501849498,
+      "medical_score": 1.0,
+      "tfidf_score": 0.9435500732556522,
+      "centrality_score": 0.9423516988754272,
+      "position_score": 0.9016393442622951,
+      "order": 110
+    }
+  ],
+  "processing_time": 21.32458734512329,
+  "num_input_chunks": 17,
+  "timestamp": 1764695411.0670805
+}

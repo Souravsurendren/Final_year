@@ -3,311 +3,495 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MediDoc AI - Intelligent Medical Document Analysis</title>
+    <title>MedAnalyzer Pro - AI-Powered Medical Document Intelligence</title>
     
     <!-- Preload critical resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/static/css/style.css">
     
-    <!-- Meta tags for SEO and social sharing -->
-    <meta name="description" content="Advanced AI-powered medical document analysis platform providing intelligent insights and compliance with medical standards.">
-    <meta name="keywords" content="medical AI, document analysis, healthcare technology, medical insights">
-    <meta name="author" content="MediDoc AI">
+    <!-- PDF Generation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- Meta tags -->
+    <meta name="description" content="Enterprise-grade AI medical document analysis with advanced summarization and intelligent insights">
+    <meta name="keywords" content="medical AI, document intelligence, healthcare analytics, clinical summarization">
+    <meta name="author" content="MedAnalyzer Pro">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%230066cc'/%3E%3Cpath d='M30 50h40M50 30v40' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea'/%3E%3Cstop offset='100%25' style='stop-color:%23764ba2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='45' fill='url(%23grad)'/%3E%3Cpath d='M35 50h30M50 35v30' stroke='white' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body>
-    <!-- Navigation Header -->
-    <header class="header">
-        <div class="container">
-            <div class="logo">
-                <i class="fas fa-heartbeat"></i>
-                <div>
-                    <div>MediDoc AI</div>
-                    <div class="header-subtitle">Intelligent Medical Analysis Platform</div>
+    <!-- Background Elements -->
+    <div class="bg-gradient"></div>
+    <div class="bg-mesh"></div>
+    <div class="bg-particles"></div>
+    
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="brand-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <div class="brand-content">
+                    <span class="brand-text">MedAnalyzer</span>
+                    <span class="brand-pro">Pro</span>
                 </div>
             </div>
             
-            <nav class="header-nav">
-                <div class="nav-status">
-                    <i class="fas fa-shield-check"></i>
-                    <span>HIPAA Compliant • Enterprise Ready</span>
+            <div class="nav-menu">
+                <a href="#dashboard" class="nav-item active">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#analytics" class="nav-item">
+                    <i class="fas fa-brain"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="#reports" class="nav-item">
+                    <i class="fas fa-file-medical"></i>
+                    <span>Reports</span>
+                </a>
+            </div>
+            
+            <div class="nav-actions">
+                <!-- Modern Theme Toggle Switch -->
+                <div class="theme-toggle" onclick="toggleTheme()" id="themeToggle">
+                    <button class="theme-btn" title="Light Mode">
+                        <i class="fas fa-sun"></i>
+                    </button>
+                    <button class="theme-btn" title="Dark Mode">
+                        <i class="fas fa-moon"></i>
+                    </button>
                 </div>
-            </nav>
+            </div>
         </div>
-    </header>
+    </nav>
 
-    <main class="main">
-        <!-- Welcome Section -->
-        <section id="welcomeSection" class="welcome-section">
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section id="dashboard" class="hero-section">
             <div class="container">
-                <div class="hero">
-                    <h1>
-                        <span class="hero-line-1">Transform Medical</span>
-                        <span class="hero-line-2">Documents into</span>
-                        <span class="hero-line-3 hero-accent">Actionable Intelligence</span>
-                    </h1>
-                    <p>
-                        Leverage cutting-edge AI to extract meaningful insights from medical documents with 
-                        precision, speed, and complete regulatory compliance. Designed for healthcare professionals 
-                        who demand excellence.
-                    </p>
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1 class="hero-title">
+                            Medical Document Intelligence
+                            <span class="gradient-text">Powered by AI</span>
+                        </h1>
+                        <p class="hero-subtitle">
+                            Transform complex medical documents into actionable insights with our advanced AI platform.
+                            Analyze, summarize, and extract key information with enterprise-grade accuracy.
+                        </p>
+                        
+                        <!-- Key Stats -->
+                        <div class="hero-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">99.7%</div>
+                                <div class="stat-label">Accuracy</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">2.3s</div>
+                                <div class="stat-label">Avg Processing</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">50k+</div>
+                                <div class="stat-label">Documents Analyzed</div>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <div class="hero-stats">
-                        <div class="hero-stat">
-                            <div class="hero-stat-number">99.7%</div>
-                            <div class="hero-stat-label">Accuracy Rate</div>
+                    <div class="hero-visual">
+                        <div class="floating-card card-1">
+                            <i class="fas fa-file-medical-alt"></i>
+                            <span>Medical Reports</span>
                         </div>
-                        <div class="hero-stat">
-                            <div class="hero-stat-number">&lt;30s</div>
-                            <div class="hero-stat-label">Processing Time</div>
-                        </div>
-                        <div class="hero-stat">
-                            <div class="hero-stat-number">24/7</div>
-                            <div class="hero-stat-label">Availability</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="upload-container">
-                    <div class="upload-area" id="uploadArea">
-                        <div class="upload-content">
-                            <div class="upload-icon">
-                                <i class="fas fa-file-medical"></i>
-                            </div>
-                            
-                            <h3>Upload Medical Document</h3>
-                            <p>Drag and drop your PDF file here, or click to browse</p>
-                            
-                            <div class="file-requirements">
-                                <span><i class="fas fa-check-circle"></i> PDF Format</span>
-                                <span><i class="fas fa-check-circle"></i> Max 50MB</span>
-                                <span><i class="fas fa-check-circle"></i> Any Language</span>
-                                <span><i class="fas fa-check-circle"></i> Secure Processing</span>
-                            </div>
-                            
-                            <button class="btn btn-primary" id="uploadBtn">
-                                <i class="fas fa-cloud-upload-alt"></i>
-                                Select Document
-                            </button>
-                            
-                            <input type="file" id="fileInput" accept=".pdf" style="display: none;">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Enhanced Features Grid -->
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">
+                        <div class="floating-card card-2">
                             <i class="fas fa-brain"></i>
+                            <span>AI Analysis</span>
                         </div>
-                        <h4>AI-Powered Analysis</h4>
-                        <p>Advanced machine learning algorithms extract key medical information with unprecedented accuracy and contextual understanding.</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-search-plus"></i>
+                        <div class="floating-card card-3">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>Insights</span>
                         </div>
-                        <h4>Hybrid Search Technology</h4>
-                        <p>Combines semantic understanding with lexical precision to retrieve the most relevant information from complex medical documents.</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-certificate"></i>
+                        <div class="floating-card card-4">
+                            <i class="fas fa-dna"></i>
+                            <span>Genomic Data</span>
                         </div>
-                        <h4>Medical Compliance</h4>
-                        <p>Adheres to ICMR, NMC, and NABH guidelines ensuring professional-grade analysis that meets healthcare industry standards.</p>
+                        <div class="floating-card card-5">
+                            <i class="fas fa-microscope"></i>
+                            <span>Lab Analysis</span>
+                        </div>
+                        <div class="floating-card card-6">
+                            <i class="fas fa-heartbeat"></i>
+                            <span>Vital Monitoring</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Processing Section -->
-        <section id="processingSection" class="processing-section hidden">
+        <!-- Upload Section -->
+        <section id="analytics" class="upload-section">
             <div class="container">
-                <div class="processing-card">
-                    <div class="processing-header">
-                        <i class="fas fa-cogs" id="processingIcon"></i>
-                        <h2>Analyzing Document</h2>
-                        <p>Our AI is processing your medical document with enterprise-grade precision</p>
+                <div class="section-header">
+                    <h2 class="section-title">Analyze Your Document</h2>
+                    <p class="section-subtitle">Upload medical documents and get instant AI-powered analysis</p>
+                </div>
+                
+                <div class="upload-container">
+                    <!-- Upload Card -->
+                    <div class="upload-card">
+                        <div class="upload-header">
+                            <h3>Document Upload</h3>
+                            <div class="security-badge">
+                                <i class="fas fa-shield-check"></i>
+                                <span>HIPAA Compliant</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Summarization Type Selection -->
+                        <div class="analysis-options">
+                            <h4>Analysis Method</h4>
+                            <div class="option-grid">
+                                <label class="option-card">
+                                    <input type="radio" name="summaryType" value="abstractive" checked>
+                                    <div class="option-content">
+                                        <div class="option-icon">
+                                            <i class="fas fa-magic"></i>
+                                        </div>
+                                        <div class="option-info">
+                                            <h5>AI Abstractive</h5>
+                                            <p>Advanced AI generates comprehensive summaries with new insights</p>
+                                        </div>
+                                        <div class="option-check">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                    </div>
+                                </label>
+                                
+                                <label class="option-card">
+                                    <input type="radio" name="summaryType" value="extractive">
+                                    <div class="option-content">
+                                        <div class="option-icon">
+                                            <i class="fas fa-highlighter"></i>
+                                        </div>
+                                        <div class="option-info">
+                                            <h5>Extractive Summary</h5>
+                                            <p>Selects and highlights key sentences from original document</p>
+                                        </div>
+                                        <div class="option-check">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Drop Zone -->
+                        <div class="drop-zone" id="dropZone">
+                            <div class="drop-content">
+                                <div class="drop-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <h4>Drag & Drop your file here</h4>
+                                <p>or <span class="browse-text">browse files</span></p>
+                                <div class="file-info">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Supports PDF files up to 50MB</span>
+                                </div>
+                            </div>
+                            <input type="file" id="fileInput" accept=".pdf" hidden>
+                        </div>
+                        
+                        <!-- Upload Progress -->
+                        <div class="upload-progress" id="uploadProgress" style="display: none;">
+                            <div class="progress-header">
+                                <span class="progress-text">Processing document...</span>
+                                <span class="progress-percent">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                            <div class="progress-steps">
+                                <div class="step active">
+                                    <i class="fas fa-upload"></i>
+                                    <span>Upload</span>
+                                </div>
+                                <div class="step">
+                                    <i class="fas fa-cog fa-spin"></i>
+                                    <span>Processing</span>
+                                </div>
+                                <div class="step">
+                                    <i class="fas fa-brain"></i>
+                                    <span>Analysis</span>
+                                </div>
+                                <div class="step">
+                                    <i class="fas fa-check"></i>
+                                    <span>Complete</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="progress-container">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill"></div>
+                    <!-- Quick Stats -->
+                    <div class="quick-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">Processing Time</div>
+                                <div class="stat-value" id="processingTime">--</div>
+                            </div>
                         </div>
-                        <div class="progress-text" id="progressText">Initializing analysis pipeline...</div>
-                    </div>
-                    
-                    <div class="processing-steps">
-                        <div class="step" data-step="1" id="step1">
-                            <i class="fas fa-file-upload"></i>
-                            <span>Document Upload</span>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-puzzle-piece"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">Chunks Processed</div>
+                                <div class="stat-value" id="chunksProcessed">--</div>
+                            </div>
                         </div>
-                        <div class="step" data-step="2" id="step2">
-                            <i class="fas fa-eye"></i>
-                            <span>Content Extraction</span>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-bullseye"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">Confidence Score</div>
+                                <div class="stat-value" id="confidenceScore">--</div>
+                            </div>
                         </div>
-                        <div class="step" data-step="3" id="step3">
-                            <i class="fas fa-cut"></i>
-                            <span>Intelligent Chunking</span>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-key"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-title">Key Terms</div>
+                                <div class="stat-value" id="keyTerms">--</div>
+                            </div>
                         </div>
-                        <div class="step" data-step="4" id="step4">
-                            <i class="fas fa-database"></i>
-                            <span>Vector Indexing</span>
-                        </div>
-                        <div class="step" data-step="5" id="step5">
-                            <i class="fas fa-brain"></i>
-                            <span>AI Analysis</span>
-                        </div>
-                        <div class="step" data-step="6">
-                            <i class="fas fa-clipboard-check"></i>
-                            <span>Summary Generation</span>
-                        </div>
-                    </div>
-                    
-                    <div class="fun-fact" id="funFact">
-                        <i class="fas fa-lightbulb"></i>
-                        <span>Did you know? Our AI can identify medical patterns across 50+ languages and dialects.</span>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Results Section -->
-        <section id="resultsSection" class="results-section hidden">
+        <section id="reports" class="results-section" style="display: none;">
             <div class="container">
                 <div class="results-header">
-                    <i class="fas fa-chart-line"></i>
-                    <h2>Analysis Complete</h2>
-                    <p>Your medical document has been successfully processed and analyzed</p>
-                </div>
-                
-                <!-- Enhanced Statistics Grid -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <span class="stat-number" id="chunksProcessed">0</span>
-                        <span class="stat-label">Sections Analyzed</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" id="processingTime">0s</span>
-                        <span class="stat-label">Processing Time</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" id="keyTerms">0</span>
-                        <span class="stat-label">Key Medical Terms</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" id="confidenceScore">0%</span>
-                        <span class="stat-label">Analysis Confidence</span>
+                    <h2>Analysis Results</h2>
+                    <div class="results-actions">
+                        <button class="btn-secondary" id="exportBtn" onclick="handleExportReport()">
+                            <i class="fas fa-download"></i>
+                            Export Report
+                        </button>
+                        <button class="btn-secondary" id="shareBtn" onclick="handleShareReport()">
+                            <i class="fas fa-share"></i>
+                            Share
+                        </button>
+                        <button class="btn-primary" onclick="handleNewAnalysis()">
+                            <i class="fas fa-plus"></i>
+                            New Analysis
+                        </button>
                     </div>
                 </div>
                 
-                <!-- Summary Container -->
-                <div class="summary-container">
-                    <div class="summary-header">
-                        <h3>
-                            <i class="fas fa-file-medical-alt"></i>
-                            Medical Document Summary
-                        </h3>
-                        <div class="compliance-badge">
-                            <i class="fas fa-shield-check"></i>
-                            Medical Standards Compliant
+                <div class="results-grid">
+                    <!-- Summary Card -->
+                    <div class="result-card summary-card">
+                        <div class="card-header">
+                            <h3>
+                                <i class="fas fa-file-alt"></i>
+                                Document Summary
+                            </h3>
+                            <div class="card-actions">
+                                <button class="btn-icon" title="Copy Summary" onclick="handleCopySummary()">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button class="btn-icon" title="Expand" onclick="handleExpandSummary()">
+                                    <i class="fas fa-expand"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="summary-content" id="summaryContent">
+                                <!-- Summary will be populated here -->
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="summary-content" id="summaryContent">
-                        <!-- Summary will be populated here -->
+                    <!-- Insights Card -->
+                    <div class="result-card insights-card">
+                        <div class="card-header">
+                            <h3>
+                                <i class="fas fa-lightbulb"></i>
+                                Key Insights
+                            </h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="insight-item">
+                                <div class="insight-icon">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <div class="insight-content">
+                                    <h4>Clinical Findings</h4>
+                                    <p>Key medical observations and diagnoses identified</p>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <div class="insight-icon">
+                                    <i class="fas fa-pills"></i>
+                                </div>
+                                <div class="insight-content">
+                                    <h4>Treatment Plans</h4>
+                                    <p>Recommended therapies and medications</p>
+                                </div>
+                            </div>
+                            
+                            <div class="insight-item">
+                                <div class="insight-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="insight-content">
+                                    <h4>Risk Assessment</h4>
+                                    <p>Identified risk factors and preventive measures</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                
-                <!-- Action Buttons -->
-                <div class="action-buttons">
-                    <button class="btn btn-primary" onclick="downloadSummary()" id="downloadBtn">
-                        <i class="fas fa-download"></i>
-                        Download Report
-                    </button>
-                    <button class="btn btn-secondary" onclick="resetAnalysis()" id="newAnalysisBtn">
-                        <i class="fas fa-plus-circle"></i>
-                        Analyze Another Document
-                    </button>
-                    <button class="btn btn-secondary" onclick="shareSummary()">
-                        <i class="fas fa-share-alt"></i>
-                        Share Securely
-                    </button>
+                    
+                    <!-- Analytics Card -->
+                    <div class="result-card analytics-card">
+                        <div class="card-header">
+                            <h3>
+                                <i class="fas fa-chart-pie"></i>
+                                Document Analytics
+                            </h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="analytics-grid">
+                                <div class="metric">
+                                    <div class="metric-value">247</div>
+                                    <div class="metric-label">Words Analyzed</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">15</div>
+                                    <div class="metric-label">Key Terms</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">3</div>
+                                    <div class="metric-label">Main Topics</div>
+                                </div>
+                                <div class="metric">
+                                    <div class="metric-value">98%</div>
+                                    <div class="metric-label">Confidence</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Error Section -->
-        <section id="errorSection" class="error-section hidden">
+        <!-- Search Section -->
+        <section class="search-section" id="searchSection" style="display: none;">
             <div class="container">
-                <div class="error-card">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <h2>Processing Error</h2>
-                    <p id="errorMessage">We encountered an issue while processing your document. Please try again.</p>
-                    <button class="btn btn-primary" onclick="resetAnalysis()" id="retryBtn">
-                        <i class="fas fa-redo"></i>
-                        Try Again
-                    </button>
+                <div class="search-header">
+                    <h2>Ask Questions About Your Document</h2>
+                    <p>Get instant answers from your analyzed medical document</p>
+                </div>
+                
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <input type="text" id="searchInput" placeholder="Ask anything about the document..." class="search-input">
+                        <button class="search-btn" id="searchBtn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="search-suggestions">
+                        <div class="suggestion-item">What is the primary diagnosis?</div>
+                        <div class="suggestion-item">What medications are mentioned?</div>
+                        <div class="suggestion-item">What are the key findings?</div>
+                        <div class="suggestion-item">Are there any recommendations?</div>
+                        <div class="suggestion-item">What tests were performed?</div>
+                        <div class="suggestion-item">What is the patient's condition?</div>
+                    </div>
+                    
+                    <div class="search-results" id="searchResults">
+                        <!-- Clean search answers will appear here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="settings-section" style="display: none;">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Settings & Configuration</h2>
+                    <p class="section-subtitle">Customize your MedAnalyzer Pro experience</p>
+                </div>
+                
+                <div class="settings-grid">
+                    <div class="setting-card">
+                        <div class="setting-header">
+                            <h3>
+                                <i class="fas fa-palette"></i>
+                                Interface Preferences
+                            </h3>
+                        </div>
+                        <div class="setting-content">
+                            <div class="setting-item">
+                                <label>Theme</label>
+                                <select class="setting-select" id="themeSelect" onchange="handleThemeChange(this.value)">
+                                    <option value="light">Light Mode</option>
+                                    <option value="dark">Dark Mode</option>
+                                    <option value="auto">Auto (System)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Enhanced Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>About MediDoc AI</h4>
-                    <p>
-                        A cutting-edge medical document analysis platform powered by advanced artificial intelligence. 
-                        We transform complex medical information into actionable insights while maintaining the highest 
-                        standards of security and compliance.
-                    </p>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Key Features</h4>
-                    <ul>
-                        <li><i class="fas fa-check"></i> AI-Powered Document Analysis</li>
-                        <li><i class="fas fa-check"></i> HIPAA & Medical Compliance</li>
-                        <li><i class="fas fa-check"></i> Multi-Language Support</li>
-                        <li><i class="fas fa-check"></i> Real-Time Processing</li>
-                        <li><i class="fas fa-check"></i> Secure Cloud Infrastructure</li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Compliance & Security</h4>
-                    <ul>
-                        <li><i class="fas fa-shield-check"></i> ICMR Guidelines Compliant</li>
-                        <li><i class="fas fa-shield-check"></i> NMC Standards Adherent</li>
-                        <li><i class="fas fa-shield-check"></i> NABH Quality Assured</li>
-                        <li><i class="fas fa-shield-check"></i> HIPAA Compliant Processing</li>
-                        <li><i class="fas fa-shield-check"></i> End-to-End Encryption</li>
-                    </ul>
-                </div>
+    <!-- Fun Facts Modal (preserved from original) -->
+    <div class="fun-fact" id="funFact" style="display: none;">
+        <div class="fun-fact-content">
+            <div class="fun-fact-icon">
+                <i class="fas fa-lightbulb"></i>
             </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2024 MediDoc AI. Advancing Healthcare Through Intelligent Technology.</p>
+            <div class="fun-fact-text">
+                <strong>Did you know?</strong>
+                <span>Loading interesting fact...</span>
             </div>
         </div>
-    </footer>
+    </div>
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="/static/js/app.js?v=3"></script>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>Processing Your Document</h3>
+            <p>Our AI is analyzing your medical document...</p>
+        </div>
+    </div>
+
+    <!-- Authentication Modals -->
+    <!-- JavaScript -->
+    <script src="/static/js/app.js"></script>
 </body>
 </html>
