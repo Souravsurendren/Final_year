@@ -1,0 +1,8 @@
+{
+  "ts": "2026-01-01T07:07:43.731646Z",
+  "image_type": "Computed Tomography (CT) Scan",
+  "body_part": "Thorax",
+  "abnormalities": true,
+  "findings_count": 3,
+  "processing_time": 17.760805130004883
+}

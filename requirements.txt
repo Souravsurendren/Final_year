@@ -22,3 +22,8 @@ pandas
 matplotlib
 seaborn
 scikit-learn
+# Medical NLP dependencies
+transformers>=4.30.0
+# Medical Image Analysis dependencies
+httpx
+Pillow

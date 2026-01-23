@@ -1,0 +1,116 @@
+{
+  "summary": "**Key Medical Information:**\n1. HbA1c has been endorsed by clinical groups & ADA (American Diabetes Association) guidelines 2017, for diagnosis of diabetes using a cut-off point of 6\n\n**Clinical Findings & Details:**\n1. It reflects the estimated average glucose (eAG)\n2. Trends in HbA1c are a better indicator of diabetic control than a solitary test\n3. : 25110655 / 39408 AGE/SEX : 47 Yrs / Female DATE OF COLLECTION : 14-12-2025 at 07:59 AM REFERRED BY : SELF DATE OF REPORT : 14-12-2025 at 04:43 PM REF CENTER : TECHNO DIAGNOSTICS & LAB BILL NO\n4. Sc, Clinical lab Technology LAB INCHARGE Rajasekar N DMLT , D pharm TEST PARAMETER RESULT UNIT REFERENCE RANGE S\n\n**Additional Information:**\n1. HbA1c (GLYCOSYLATED Hb) 7\n2. 0 * mg/dL National Glycohemoglobin standardization Program (NGSP) formula\n3. (calculation) Interpretation : 1\n4. HbA1c is used for monitoring diabetic control\n5. S **** End of Report **** Printed by: JANANI\n6. N on 15-12-2025 at 08:37 AM Name : Mrs\n7. Sc, Clinical lab Technology LAB INCHARGE Rajasekar N DMLT , D pharm Head of the Laboratory service Page 1 of 1\n\n---\n**Summary Type:** Extractive\n**Sentences Extracted:** 12\n**High Priority:** 1 sentences\n**Medium Priority:** 4 sentences\n**Low Priority:** 7 sentences",
+  "extracted_sentences": [
+    {
+      "sentence": "HbA1c (GLYCOSYLATED Hb) 7",
+      "score": 0.39246977294238294,
+      "medical_score": 0.0,
+      "tfidf_score": 0.3208860884011541,
+      "centrality_score": 0.8489930033683777,
+      "position_score": 1.0,
+      "order": 0
+    },
+    {
+      "sentence": "0 * mg/dL National Glycohemoglobin standardization Program (NGSP) formula",
+      "score": 0.44397751994315904,
+      "medical_score": 0.0,
+      "tfidf_score": 0.5606608769710051,
+      "centrality_score": 0.8460184335708618,
+      "position_score": 0.9230769230769231,
+      "order": 1
+    },
+    {
+      "sentence": "(calculation) Interpretation : 1",
+      "score": 0.2887302396905953,
+      "medical_score": 0.0,
+      "tfidf_score": 0.25073516664636286,
+      "centrality_score": 0.56572425365448,
+      "position_score": 0.8461538461538461,
+      "order": 2
+    },
+    {
+      "sentence": "HbA1c is used for monitoring diabetic control",
+      "score": 0.43482081707383385,
+      "medical_score": 0.0,
+      "tfidf_score": 0.4315909606030277,
+      "centrality_score": 1.0,
+      "position_score": 0.7692307692307692,
+      "order": 3
+    },
+    {
+      "sentence": "It reflects the estimated average glucose (eAG)",
+      "score": 0.5718273495186375,
+      "medical_score": 1.0,
+      "tfidf_score": 0.43428604787574976,
+      "centrality_score": 0.8530233502388,
+      "position_score": 0.5,
+      "order": 4
+    },
+    {
+      "sentence": "HbA1c has been endorsed by clinical groups & ADA (American Diabetes Association) guidelines 2017, for diagnosis of diabetes using a cut-off point of 6",
+      "score": 0.8695021549444013,
+      "medical_score": 2.0,
+      "tfidf_score": 0.7512810269125063,
+      "centrality_score": 0.9267275929450989,
+      "position_score": 0.5,
+      "order": 5
+    },
+    {
+      "sentence": "Trends in HbA1c are a better indicator of diabetic control than a solitary test",
+      "score": 0.591772218259001,
+      "medical_score": 1.0,
+      "tfidf_score": 0.5580905863519129,
+      "centrality_score": 0.8089982867240906,
+      "position_score": 0.5,
+      "order": 6
+    },
+    {
+      "sentence": "S **** End of Report **** Printed by: JANANI",
+      "score": 0.2979339400615275,
+      "medical_score": 0.0,
+      "tfidf_score": 0.38254291204054364,
+      "centrality_score": 0.6091928482055664,
+      "position_score": 0.5,
+      "order": 8
+    },
+    {
+      "sentence": "N on 15-12-2025 at 08:37 AM Name : Mrs",
+      "score": 0.2950809529353701,
+      "medical_score": 0.0,
+      "tfidf_score": 0.479150494309077,
+      "centrality_score": 0.5011733174324036,
+      "position_score": 0.5,
+      "order": 9
+    },
+    {
+      "sentence": ": 25110655 / 39408 AGE/SEX : 47 Yrs / Female DATE OF COLLECTION : 14-12-2025 at 07:59 AM REFERRED BY : SELF DATE OF REPORT : 14-12-2025 at 04:43 PM REF CENTER : TECHNO DIAGNOSTICS & LAB BILL NO",
+      "score": 0.7353009299490036,
+      "medical_score": 1.0,
+      "tfidf_score": 1.0,
+      "centrality_score": 0.8335114121437073,
+      "position_score": 0.7692307692307692,
+      "order": 10
+    },
+    {
+      "sentence": "Sc, Clinical lab Technology LAB INCHARGE Rajasekar N DMLT , D pharm TEST PARAMETER RESULT UNIT REFERENCE RANGE S",
+      "score": 0.7098506550179331,
+      "medical_score": 1.0,
+      "tfidf_score": 0.758212919838365,
+      "centrality_score": 0.9427281618118286,
+      "position_score": 0.8461538461538461,
+      "order": 11
+    },
+    {
+      "sentence": "Sc, Clinical lab Technology LAB INCHARGE Rajasekar N DMLT , D pharm Head of the Laboratory service Page 1 of 1",
+      "score": 0.5150439549067809,
+      "medical_score": 0.0,
+      "tfidf_score": 0.7009988042491987,
+      "centrality_score": 0.9899462461471558,
+      "position_score": 0.9230769230769231,
+      "order": 12
+    }
+  ],
+  "processing_time": 5.972157716751099,
+  "num_input_chunks": 2,
+  "timestamp": 1767244871.682528
+}

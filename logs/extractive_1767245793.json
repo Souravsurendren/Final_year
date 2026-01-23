@@ -1,0 +1,62 @@
+{
+  "summary": "**Key Medical Information:**\n1. HbA1c has been endorsed by clinical groups & ADA (American Diabetes Association) guidelines 2017, for diagnosis of diabetes using a cut-off point of 6\n\n**Clinical Findings & Details:**\n1. It reflects the estimated average glucose (eAG)\n2. Trends in HbA1c are a better indicator of diabetic control than a solitary test\n\n**Additional Information:**\n1. HbA1c (GLYCOSYLATED Hb) 7\n2. 0 * mg/dL National Glycohemoglobin standardization Program (NGSP) formula\n3. HbA1c is used for monitoring diabetic control\n\n---\n**Summary Type:** Extractive\n**Sentences Extracted:** 6\n**High Priority:** 1 sentences\n**Medium Priority:** 2 sentences\n**Low Priority:** 3 sentences",
+  "extracted_sentences": [
+    {
+      "sentence": "HbA1c (GLYCOSYLATED Hb) 7",
+      "score": 0.4054885247116671,
+      "medical_score": 0.0,
+      "tfidf_score": 0.4242368256113474,
+      "centrality_score": 0.797717273235321,
+      "position_score": 1.0,
+      "order": 0
+    },
+    {
+      "sentence": "0 * mg/dL National Glycohemoglobin standardization Program (NGSP) formula",
+      "score": 0.4530541517541169,
+      "medical_score": 0.0,
+      "tfidf_score": 0.7462344838004743,
+      "centrality_score": 0.7326487898826599,
+      "position_score": 0.8333333333333334,
+      "order": 1
+    },
+    {
+      "sentence": "HbA1c is used for monitoring diabetic control",
+      "score": 0.44290016187622133,
+      "medical_score": 0.0,
+      "tfidf_score": 0.5716006475048853,
+      "centrality_score": 1.0,
+      "position_score": 0.5,
+      "order": 2
+    },
+    {
+      "sentence": "It reflects the estimated average glucose (eAG)",
+      "score": 0.5922376464802078,
+      "medical_score": 1.0,
+      "tfidf_score": 0.5780307456249852,
+      "centrality_score": 0.790919840335846,
+      "position_score": 0.5,
+      "order": 3
+    },
+    {
+      "sentence": "HbA1c has been endorsed by clinical groups & ADA (American Diabetes Association) guidelines 2017, for diagnosis of diabetes using a cut-off point of 6",
+      "score": 0.9378104030885969,
+      "medical_score": 2.0,
+      "tfidf_score": 1.0,
+      "centrality_score": 0.9512416124343872,
+      "position_score": 0.5,
+      "order": 4
+    },
+    {
+      "sentence": "Trends in HbA1c are a better indicator of diabetic control than a solitary test",
+      "score": 0.7003903645044182,
+      "medical_score": 1.0,
+      "tfidf_score": 0.7405509105786786,
+      "centrality_score": 0.9276772141456604,
+      "position_score": 0.8333333333333334,
+      "order": 5
+    }
+  ],
+  "processing_time": 6.162632703781128,
+  "num_input_chunks": 2,
+  "timestamp": 1767245793.5638652
+}

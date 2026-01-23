@@ -30,18 +30,119 @@ class ExtractiveSummarizer:
         }
         
     def preprocess_text(self, text: str) -> List[str]:
-        """Split text into sentences and clean them"""
-        # Split into sentences using multiple delimiters
-        sentences = re.split(r'[.!?]+', text)
+        """Split text into sentences and clean them, filtering out noise"""
+        # First, protect decimal numbers and abbreviations from splitting
+        # Replace decimal points with a placeholder
+        protected_text = re.sub(r'(\d)\.(\d)', r'\1<DECIMAL>\2', text)
+        
+        # Split into sentences using periods followed by space and capital letter, or ! or ?
+        # This is smarter than splitting on all periods
+        sentences = re.split(r'(?<=[.!?])\s+(?=[A-Z])', protected_text)
+        
+        # If that didn't work well, fall back to simpler split
+        if len(sentences) < 3:
+            sentences = re.split(r'[.!?]+\s+', protected_text)
+        
+        # Restore decimal points
+        sentences = [s.replace('<DECIMAL>', '.') for s in sentences]
+        
+        # Patterns to filter out (lab report metadata, headers, footers)
+        noise_patterns = [
+            r'^\d+[\s/]+\d+',  # Bill/reference numbers like "25110655 / 39408"
+            r'^page\s*\d+',    # Page numbers
+            r'printed\s*(by|on)',  # Printer info
+            r'date\s*(of|:)',  # Date fields
+            r'^\s*name\s*:',   # Name fields
+            r'ref\s*(center|no|by)',  # Reference info
+            r'bill\s*no',      # Bill numbers
+            r'end\s*of\s*report',  # End markers
+            r'^\s*\*+',        # Asterisk lines
+            r'lab\s*incharge',  # Lab personnel
+            r'd\s*pharm',      # Credentials
+            r'dmlt',           # Credentials  
+            r'b\.?sc',         # Credentials
+            r'm\.?sc',         # Credentials
+            r'age\s*/\s*sex',  # Demographics field
+            r'collection\s*:',  # Collection info
+            r'report\s*:.*\d{2}:\d{2}',  # Report timestamps
+            r'^\s*s\s+\*{3,}',  # Signature lines
+            r'^\s*[a-z]\s*$',  # Single letters
+            r'^\d+\s*yrs?\s*/\s*(male|female)',  # Age/sex compact
+            r'head\s*of\s*(the\s*)?laboratory',  # Lab head
+            r'^\s*\(\s*calculation\s*\)',  # Calculation notes
+            r'interpretation\s*:\s*\d+',  # Just interpretation number
+        ]
+        
+        # Compile patterns for efficiency
+        noise_regex = re.compile('|'.join(noise_patterns), re.IGNORECASE)
+        
+        # Words that indicate noise when they appear at the start
+        noise_start_words = [
+            'printed', 'name', 'ref', 'bill', 'page', 'date', 
+            'collection', 'report', 'referred', 'test parameter',
+            'unit', 'reference range', 'result', 'end of'
+        ]
         
         # Clean and filter sentences
         cleaned_sentences = []
         for sentence in sentences:
             sentence = sentence.strip()
-            # Filter out very short sentences or headers
-            if len(sentence) > 20 and not sentence.isupper():
-                # Remove extra whitespace
-                sentence = re.sub(r'\s+', ' ', sentence)
+            
+            # Skip very short sentences
+            if len(sentence) < 30:
+                continue
+            
+            # Skip if just a number or list marker (1., 2., etc.)
+            if re.match(r'^\s*\d+\s*$', sentence):
+                continue
+            if re.match(r'^\s*\*+\s*$', sentence):
+                continue
+                
+            # Skip all caps (headers)
+            if sentence.isupper():
+                continue
+            
+            # Skip if matches noise patterns
+            if noise_regex.search(sentence):
+                continue
+            
+            # Skip if starts with noise words
+            sentence_lower = sentence.lower()
+            if any(sentence_lower.startswith(word) for word in noise_start_words):
+                continue
+            
+            # Skip if starts with just a number (likely a fragment)
+            if re.match(r'^\d+\s*[a-z]?\s*$', sentence_lower):
+                continue
+            
+            # Skip partial medical values without context
+            if re.match(r'^\d+\.?\d*\s*\*?\s*(mg|ml|%|mmol|g|dl|l)\b', sentence_lower):
+                continue
+            
+            # Skip if too many numbers (likely data tables)
+            num_digits = sum(c.isdigit() for c in sentence)
+            num_alpha = sum(c.isalpha() for c in sentence)
+            if num_alpha > 0 and num_digits / (num_alpha + num_digits) > 0.35:
+                continue
+            
+            # Skip if contains too many special characters
+            special_count = sum(1 for c in sentence if c in ':/*\\|')
+            if special_count > 3:
+                continue
+            
+            # Skip sentences that are mostly formatting
+            if sentence.count('*') > 2:
+                continue
+            
+            # Remove extra whitespace
+            sentence = re.sub(r'\s+', ' ', sentence)
+            
+            # Remove leading numbers/list markers like "1." or "2."
+            sentence = re.sub(r'^\d+\.\s*', '', sentence)
+            
+            # Final length check after cleaning
+            word_count = len(sentence.split())
+            if len(sentence) > 25 and word_count >= 4:
                 cleaned_sentences.append(sentence)
         
         return cleaned_sentences

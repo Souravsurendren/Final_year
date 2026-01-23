@@ -14,30 +14,34 @@ Instructions:
 2. Present only verified information found in the provided text — do not infer or assume missing details.
 3. Clearly indicate any incomplete, unclear, or missing information.
 4. Use precise, formal medical terminology suitable for healthcare professionals.
-5.Present the summary in clear, professional medical language.
-6.Remove any original bullet points, symbols (+, *, -), or formatting from the retrieved text.
+5. Present the summary in clear, professional medical language.
+6. Remove any original bullet points, symbols (+, *, -), or formatting from the retrieved text.
 7. Use plain text with proper headings as shown below.
+8. IMPORTANT: Always start with Patient Demographics - extract the patient's name, age, and gender from the report.
 
 ---
 
 **Output Format:**
 
-1. Patient Presentation & Chief Complaint:  
+1. Patient Demographics:
+<Extract and display: Patient Name, Age, Gender. Look for patterns like "Mrs./Mr. [Name]", "[Age] Yrs/Years", "Male/Female". This MUST be the first section.>
+
+2. Patient Presentation & Chief Complaint:  
 <describe symptoms and reason for admission>
 
-2. Clinical Findings & Examination Results:
+3. Clinical Findings & Examination Results:
 <document physical findings, vital signs, physician observations>
 
-3. Diagnostic Tests & Imaging Findings:  
-<list laboratory, radiology, and diagnostic reports>
+4. Diagnostic Tests & Imaging Findings:  
+<list laboratory, radiology, and diagnostic reports with their values and interpretations>
 
-4. Treatment & Medications: 
+5. Treatment & Medications: 
 <summarize treatments administered and drugs prescribed or suggest the medications related to the diseases patient diagnosed with>
 
-5. Follow-up Recommendations & Prognosis: 
+6. Follow-up Recommendations & Prognosis: 
 <include discharge advice, further tests, prognosis, or review schedule>
 
-6. Notes:  
+7. Notes:  
 <clearly mention if any data is missing or ambiguous>
 
 ---
