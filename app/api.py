@@ -74,7 +74,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
-    """Serve the main HTML page"""
+    """Serve the main dashboard UI"""
     html_file = Path("static/index.html")
     if html_file.exists():
         return HTMLResponse(content=html_file.read_text(encoding='utf-8'), status_code=200)
