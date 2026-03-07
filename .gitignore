@@ -1,1 +1,191 @@
-".env" 
+# ===========================
+# Python
+# ===========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ===========================
+# Virtual Environment
+# ===========================
+rag/
+venv/
+env/
+.env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# ===========================
+# Environment Variables
+# ===========================
+.env
+.env.local
+.env.*.local
+*.env
+secrets.yaml
+secrets.json
+
+# ===========================
+# IDE & Editors
+# ===========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# ===========================
+# Uploaded Files & Data
+# ===========================
+uploads/
+uploads/*
+!uploads/.gitkeep
+data/
+datasets/
+
+# ===========================
+# FAISS Indexes & Models
+# ===========================
+indexes/
+indexes/*
+!indexes/.gitkeep
+*.faiss
+*.index
+*.pkl
+*.pickle
+*.bin
+*.pt
+*.pth
+*.onnx
+*.h5
+*.hdf5
+
+# ===========================
+# Model Cache
+# ===========================
+.cache/
+models/
+sentence-transformers/
+transformers_cache/
+huggingface/
+~/.cache/
+
+# ===========================
+# Logs & Debug
+# ===========================
+*.log
+logs/
+*.out
+*.err
+debug/
+.debug/
+
+# ===========================
+# OS Generated
+# ===========================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ===========================
+# Jupyter Notebooks
+# ===========================
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+.jupyter/
+
+# ===========================
+# Testing & Coverage
+# ===========================
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# ===========================
+# Build & Distribution
+# ===========================
+build/
+dist/
+*.manifest
+*.spec
+
+# ===========================
+# Temporary Files
+# ===========================
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# ===========================
+# Docker
+# ===========================
+.docker/
+docker-compose.override.yml
+
+# ===========================
+# Vercel & Deployment
+# ===========================
+.vercel/
+.netlify/
+.railway/
+
+# ===========================
+# Large Files (use Git LFS)
+# ===========================
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.pdf
+!static/*.pdf
+
+# ===========================
+# Credentials & Keys
+# ===========================
+*.pem
+*.key
+*.crt
+*.p12
+credentials.json
+service-account.json
+firebase-admin*.json
