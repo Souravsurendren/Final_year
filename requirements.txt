@@ -3,27 +3,39 @@ uvicorn[standard]
 python-multipart
 pydantic[email]
 email-validator
-pymupdf 
-langchain 
-langchain-nvidia-ai-endpoints
-faiss-cpu 
-sentence-transformers 
-transformers>=4.30.0 
-requests 
-rank_bm25 
-numpy 
-tqdm 
-python-dotenv 
+
+# Core app/runtime
+python-dotenv
 orjson
-rouge-score
-evaluate
+requests
+httpx
+
+# PDF / document processing
+pymupdf
+Pillow
+
+# Retrieval / NLP
+langchain
+langchain-text-splitters
+langchain-nvidia-ai-endpoints
+faiss-cpu
+rank_bm25
+sentence-transformers
+transformers>=4.30.0
 nltk
+evaluate
+rouge-score
+
+# Data / ML
+numpy
 pandas
+scikit-learn
+tqdm
+
+# Visualization
 matplotlib
 seaborn
-scikit-learn
-# Medical NLP dependencies
-transformers>=4.30.0
-# Medical Image Analysis dependencies
-httpx
-Pillow
+
+# Common FastAPI static/template support (if used)
+aiofiles
+jinja2

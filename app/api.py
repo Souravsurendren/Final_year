@@ -17,7 +17,6 @@ from .pdf_parser import extract_text_pages
 from .chunking import chunk_pages
 from .indexer import build_faiss_index
 from .bm25_search import build_bm25
-from .retrieval import hybrid_search
 from .summarizer import map_reduce_summarize
 from .extractive_summarizer import extractive_summarize
 from .utils import write_json
@@ -45,6 +44,15 @@ from .lab_trends import (
 )
 from .translator import translate_summary
 from .risk_calculator import calculate_risks
+from .services.rag_service import (
+    ask_multimodal as ask_multimodal_rag,
+    ask_with_explainable_rag,
+    summarize_with_explainable_rag,
+)
+from .services.retrieval_service import adaptive_hybrid_search
+from .services.explainability import build_evidence_payload, attribute_answer_to_evidence
+from .services.fact_checker import verify_output
+from .services.confidence import compute_confidence
 
 app = FastAPI(title="MedRAG Open Source API", version="2.0.0", description="Open source medical document analysis platform")
 
@@ -117,6 +125,8 @@ async def upload_and_analyze(
             # 2. Chunk pages
             print("Step 2: Chunking pages...")
             chunks = chunk_pages(pages)
+            for c in chunks:
+                c["source_document"] = file.filename
             print(f"Created {len(chunks)} chunks")
             
             # 3. Persist metadata
@@ -132,9 +142,10 @@ async def upload_and_analyze(
             bm25, ids = build_bm25(chunks, persist=True)
             print("BM25 index built")
             
-            # 5. Retrieve relevant chunks
+            # 5. Retrieve relevant chunks (adaptive hybrid retrieval)
             print("Step 5: Retrieving relevant chunks...")
-            retrieved = hybrid_search("Summarize full report comprehensively", META_DIR)
+            adaptive = adaptive_hybrid_search("Summarize full report comprehensively", META_DIR)
+            retrieved = adaptive.get("results", [])
             print(f"Retrieved {len(retrieved)} chunks")
             
             # Ensure coverage
@@ -198,10 +209,25 @@ async def upload_and_analyze(
                 risk_profile = None
             
             # Return results
+            evidence = build_evidence_payload(adaptive.get("results", []), top_k=8)
+            attribution = attribute_answer_to_evidence(summary, evidence)
+            fact_check = verify_output(summary, evidence)
+            confidence_obj = compute_confidence(summary, sample_generator=None, n_samples=1)
+
             return JSONResponse(content={
                 "success": True,
+                "answer": summary,
                 "summary": summary,
                 "summary_type": summary_method,
+                "evidence": evidence,
+                "attribution": attribution,
+                "confidence": confidence_obj.get("confidence", 0.5),
+                "warning": confidence_obj.get("warning"),
+                "fact_check": fact_check,
+                "retrieval": {
+                    "lambda_semantic": adaptive.get("lambda_semantic"),
+                    "cached": adaptive.get("cached", False)
+                },
                 "stats": {
                     "pages": len(pages),
                     "chunks": len(chunks),
@@ -434,23 +460,154 @@ async def translate_endpoint(payload: dict):
         })
 
 
-@app.post("/search")
-async def search_endpoint(payload: dict):
-    """Search endpoint used by frontend. Expects JSON {"query": "..."} and returns matching chunks."""
+@app.get("/search")
+async def search_endpoint_get(query: str = ""):
+    """Search endpoint (GET). Query parameters: ?query=..."""
     try:
-        query = payload.get('query', '').strip()
+        query = query.strip()
         if not query:
-            raise HTTPException(status_code=400, detail="Query is required")
+            raise HTTPException(status_code=400, detail="query is required")
 
-        results = hybrid_search(query, str(META_DIR))
+        adaptive = adaptive_hybrid_search(query, str(META_DIR))
+        results = adaptive.get("results", [])
 
-        # Ensure results are JSON serializable (they should be dicts loaded from metadata)
-        return JSONResponse(content={"results": results})
+        return JSONResponse(content={
+            "results": results,
+            "lambda_semantic": adaptive.get("lambda_semantic"),
+            "cached": adaptive.get("cached", False)
+        })
     except HTTPException:
         raise
     except Exception as e:
         print(f"Search error: {e}")
         raise HTTPException(status_code=500, detail="Search failed")
+
+
+@app.post("/search")
+async def search_endpoint_post(payload: dict):
+    """Search endpoint (POST). Expects JSON {"query": "..."""
+    try:
+        query = payload.get('query', '').strip()
+        if not query:
+            raise HTTPException(status_code=400, detail="Query is required")
+
+        adaptive = adaptive_hybrid_search(query, str(META_DIR))
+        results = adaptive.get("results", [])
+
+        # Ensure results are JSON serializable (they should be dicts loaded from metadata)
+        return JSONResponse(content={
+            "results": results,
+            "lambda_semantic": adaptive.get("lambda_semantic"),
+            "cached": adaptive.get("cached", False)
+        })
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Search error: {e}")
+        raise HTTPException(status_code=500, detail="Search failed")
+
+
+@app.get("/summarize")
+async def summarize_endpoint_get(query: str = ""):
+    """
+    Explainable RAG summarization endpoint (GET).
+    Query parameters: ?query=... (optional, defaults to full report summary)
+    """
+    try:
+        query = query.strip() or "Summarize full report comprehensively"
+        result = summarize_with_explainable_rag(query=query)
+        return JSONResponse(content={"success": True, **result})
+    except Exception as e:
+        print(f"Summarize error: {e}")
+        raise HTTPException(status_code=500, detail="Explainable summarization failed")
+
+
+@app.post("/summarize")
+async def summarize_endpoint_post(payload: dict):
+    """
+    Explainable RAG summarization endpoint (POST).
+    Expects JSON {"query": "optional summarization instruction"}
+    """
+    try:
+        query = payload.get("query", "Summarize full report comprehensively")
+        result = summarize_with_explainable_rag(query=query)
+        return JSONResponse(content={"success": True, **result})
+    except Exception as e:
+        print(f"Summarize error: {e}")
+        raise HTTPException(status_code=500, detail="Explainable summarization failed")
+
+
+@app.get("/ask")
+async def ask_endpoint_get(question: str = ""):
+    """
+    Explainable clinical Q&A endpoint (GET).
+    Query parameters: ?question=...
+    """
+    try:
+        question = question.strip()
+        if not question:
+            raise HTTPException(status_code=400, detail="question query parameter is required")
+
+        result = ask_with_explainable_rag(question)
+        return JSONResponse(content={"success": True, **result})
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Ask error: {e}")
+        raise HTTPException(status_code=500, detail="Explainable ask failed")
+
+
+@app.post("/ask")
+async def ask_endpoint_post(payload: dict):
+    """
+    Explainable clinical Q&A endpoint (POST).
+    Expects JSON {"question": "..."} or {"message": "..."}
+    """
+    try:
+        question = (payload.get("question") or payload.get("message") or "").strip()
+        if not question:
+            raise HTTPException(status_code=400, detail="question is required")
+
+        result = ask_with_explainable_rag(question)
+        return JSONResponse(content={"success": True, **result})
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Ask error: {e}")
+        raise HTTPException(status_code=500, detail="Explainable ask failed")
+
+
+@app.post("/ask-multimodal")
+async def ask_multimodal_endpoint(
+    question: str = Form(...),
+    image: Optional[UploadFile] = File(default=None),
+):
+    """
+    Optional multimodal endpoint.
+    Accepts question + optional image and returns unified answer.
+    """
+    tmp_path = None
+    try:
+        if not question.strip():
+            raise HTTPException(status_code=400, detail="question is required")
+
+        if image is not None:
+            file_ext = os.path.splitext(image.filename.lower())[1]
+            with tempfile.NamedTemporaryFile(delete=False, suffix=file_ext or ".jpg") as tmp_file:
+                content = await image.read()
+                tmp_file.write(content)
+                tmp_path = tmp_file.name
+
+        result = ask_multimodal_rag(question=question, image_path=tmp_path)
+        return JSONResponse(content={"success": True, **result})
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Ask multimodal error: {e}")
+        raise HTTPException(status_code=500, detail="Multimodal ask failed")
+    finally:
+        if tmp_path and os.path.exists(tmp_path):
+            os.unlink(tmp_path)
 
 @app.get("/health")
 async def health_check():
