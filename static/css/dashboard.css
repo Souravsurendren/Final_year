@@ -2366,11 +2366,17 @@ body {
     .lab-values-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+    
+    .demographics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
     .sidebar {
+        position: fixed;
         transform: translateX(-100%);
+        z-index: 200;
     }
     
     .sidebar.open {
@@ -2381,15 +2387,83 @@ body {
         margin-left: 0;
     }
     
+    .top-bar {
+        padding: 12px 16px;
+    }
+    
+    .search-box {
+        display: none;
+    }
+    
+    .content-section {
+        padding: 16px;
+    }
+    
     .quick-stats {
         grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .stat-card {
+        padding: 16px;
     }
     
     .dashboard-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
     }
     
     .summary-type-toggle {
+        grid-template-columns: 1fr;
+    }
+    
+    .drop-zone {
+        padding: 40px 20px;
+    }
+    
+    .drop-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .drop-icon i {
+        font-size: 24px;
+    }
+    
+    .summary-header-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .summary-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .btn-primary, .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .summary-stats {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .nlp-tabs {
+        flex-direction: column;
+    }
+    
+    .nlp-tab {
+        justify-content: flex-start;
+    }
+    
+    .entity-categories {
+        grid-template-columns: 1fr;
+    }
+    
+    .abbreviation-list {
         grid-template-columns: 1fr;
     }
     
@@ -2401,15 +2475,94 @@ body {
         grid-template-columns: 1fr;
     }
     
+    .lab-values-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .demographics-grid {
+        grid-template-columns: 1fr;
+    }
+    
     .language-grid {
         grid-template-columns: repeat(2, 1fr);
     }
     
-    .entity-categories {
+    .chat-container {
+        height: calc(100vh - 150px);
+    }
+    
+    .chat-message {
+        max-width: 95%;
+    }
+    
+    .chat-suggestions {
+        padding: 12px 16px;
+    }
+    
+    .quick-actions-grid {
         grid-template-columns: 1fr;
     }
     
-    .abbreviation-list {
+    .health-metrics {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .table-wrapper {
+        overflow-x: scroll;
+    }
+    
+    .data-table th, .data-table td {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title h1 {
+        font-size: 18px;
+    }
+    
+    .stat-value {
+        font-size: 24px;
+    }
+    
+    .stat-label {
+        font-size: 12px;
+    }
+    
+    .card-header {
+        padding: 16px;
+    }
+    
+    .card-header h3 {
+        font-size: 14px;
+    }
+    
+    .summary-text {
+        padding: 20px;
+        font-size: 14px;
+    }
+    
+    .language-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .toast-container {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+    }
+    
+    .toast {
+        min-width: auto;
+    }
+    
+    .value-number {
+        font-size: 24px;
+    }
+    
+    .score-value, .score-fraction {
+        font-size: 28px;
     }
 }

@@ -21,7 +21,7 @@ from .retrieval import hybrid_search
 from .summarizer import map_reduce_summarize
 from .extractive_summarizer import extractive_summarize
 from .utils import write_json
-from .config import FAISS_DIR, META_DIR
+from .config import FAISS_DIR, META_DIR, MONGODB_URI, MONGODB_DB_NAME
 from .medical_nlp import (
     full_medical_analysis,
     extract_medical_entities,
@@ -45,8 +45,15 @@ from .lab_trends import (
 )
 from .translator import translate_summary
 from .risk_calculator import calculate_risks
+from .auth import AuthManager
+from .auth_middleware import AuthMiddleware, get_current_user, require_auth
+from .document_store import DocumentStore
 
 app = FastAPI(title="MedRAG Open Source API", version="2.0.0", description="Open source medical document analysis platform")
+
+# Initialize authentication and document store
+auth_manager = AuthManager(MONGODB_URI, MONGODB_DB_NAME)
+doc_store = DocumentStore(MONGODB_URI, MONGODB_DB_NAME)
 
 # Middleware to handle ngrok browser warning bypass
 class NgrokMiddleware(BaseHTTPMiddleware):
@@ -58,6 +65,9 @@ class NgrokMiddleware(BaseHTTPMiddleware):
 
 # Add ngrok middleware
 app.add_middleware(NgrokMiddleware)
+
+# Add authentication middleware
+app.add_middleware(AuthMiddleware, auth_manager=auth_manager)
 
 # Enable CORS for frontend communication
 app.add_middleware(
@@ -73,25 +83,54 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
-async def read_root():
+async def read_root(request: Request):
     """Serve the main dashboard UI"""
-    html_file = Path("static/index.html")
-    if html_file.exists():
-        return HTMLResponse(content=html_file.read_text(encoding='utf-8'), status_code=200)
+    # Check if user is authenticated by checking cookie directly
+    session_token = request.cookies.get("session_token")
+    
+    if session_token:
+        user = auth_manager.verify_session(session_token)
+        if user:
+            # User is authenticated, serve dashboard
+            html_file = Path("static/index.html")
+            if html_file.exists():
+                return HTMLResponse(content=html_file.read_text(encoding='utf-8'), status_code=200)
+            else:
+                return HTMLResponse(content="<h1>Dashboard not found</h1>", status_code=404)
+    
+    # Not authenticated, serve login page
+    login_file = Path("static/login.html")
+    if login_file.exists():
+        return HTMLResponse(content=login_file.read_text(encoding='utf-8'), status_code=200)
     else:
-        return HTMLResponse(content="<h1>Frontend not found</h1>", status_code=404)
+        return HTMLResponse(content="<h1>Login page not found</h1>", status_code=404)
+
+
+@app.get("/login.html", response_class=HTMLResponse)
+async def login_page():
+    """Serve the login page"""
+    login_file = Path("static/login.html")
+    if login_file.exists():
+        return HTMLResponse(content=login_file.read_text(encoding='utf-8'), status_code=200)
+    else:
+        return HTMLResponse(content="<h1>Login page not found</h1>", status_code=404)
 
 @app.post("/upload")
 async def upload_and_analyze(
+    request: Request,
     file: UploadFile = File(...), 
     summary_type: str = Form(default="abstractive")
 ):
     """
     Handle PDF upload and return summarization
     Supports both extractive and abstractive summarization
-    Open source - no authentication required
+    Requires authentication
     """
     import traceback
+    
+    # Require authentication
+    user = require_auth(request)
+    user_id = user["user_id"]
     
     try:
         # Validate file type
@@ -237,13 +276,18 @@ async def upload_and_analyze(
 
 
 @app.post("/upload-image")
-async def upload_and_analyze_image(file: UploadFile = File(...)):
+async def upload_and_analyze_image(request: Request, file: UploadFile = File(...)):
     """
     Handle medical image upload and return AI analysis
     Supports: X-rays, CT, MRI, Ultrasound, Pathology slides
     Formats: JPEG, PNG, DICOM (converted), BMP, TIFF
+    Requires authentication
     """
     import traceback
+    
+    # Require authentication
+    user = require_auth(request)
+    user_id = user["user_id"]
     
     try:
         # Validate file type
@@ -457,15 +501,185 @@ async def health_check():
     """Health check endpoint"""
     return {
         "status": "healthy", 
-        "service": "MedRAG Open Source API",
+        "service": "MedRAG API",
         "version": "2.0.0",
         "features": {
-            "authentication": False,
-            "usage_limits": False,
-            "open_source": True,
-            "unlimited_uploads": True
+            "authentication": True,
+            "mongodb": True,
+            "document_storage": True
         }
     }
+
+
+# ========================================
+# AUTHENTICATION ENDPOINTS
+# ========================================
+
+@app.post("/auth/register")
+async def register(payload: dict):
+    """Register new user"""
+    try:
+        email = payload.get("email", "").strip()
+        password = payload.get("password", "").strip()
+        full_name = payload.get("full_name", "").strip()
+        
+        if not email or not password or not full_name:
+            return JSONResponse(
+                status_code=400,
+                content={"success": False, "error": "Email, password, and name are required"}
+            )
+        
+        result = auth_manager.register_user(email, password, full_name)
+        return JSONResponse(content=result)
+        
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "error": str(e)}
+        )
+
+
+@app.post("/auth/login")
+async def login(payload: dict):
+    """Login user and create session"""
+    try:
+        email = payload.get("email", "").strip()
+        password = payload.get("password", "").strip()
+        
+        if not email or not password:
+            return JSONResponse(
+                status_code=400,
+                content={"success": False, "error": "Email and password are required"}
+            )
+        
+        result = auth_manager.login_user(email, password)
+        
+        if result["success"]:
+            # Create response with session cookie
+            response = JSONResponse(content=result)
+            response.set_cookie(
+                key="session_token",
+                value=result["session_token"],
+                httponly=True,
+                max_age=7 * 24 * 60 * 60,  # 7 days
+                samesite="lax",
+                path="/"
+            )
+            return response
+        else:
+            return JSONResponse(content=result)
+        
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "error": str(e)}
+        )
+
+
+@app.post("/auth/logout")
+async def logout(request: Request):
+    """Logout user"""
+    try:
+        session_token = request.cookies.get("session_token")
+        if session_token:
+            auth_manager.logout_user(session_token)
+        
+        response = JSONResponse(content={"success": True, "message": "Logged out"})
+        response.delete_cookie("session_token", path="/")
+        return response
+        
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "error": str(e)}
+        )
+
+
+@app.get("/auth/me")
+async def get_me(request: Request):
+    """Get current user info"""
+    try:
+        session_token = request.cookies.get("session_token")
+        if not session_token:
+            return JSONResponse(
+                status_code=401,
+                content={"success": False, "error": "Not authenticated"}
+            )
+        
+        user = auth_manager.verify_session(session_token)
+        if user:
+            return JSONResponse(content={"success": True, "user": user})
+        else:
+            return JSONResponse(
+                status_code=401,
+                content={"success": False, "error": "Invalid session"}
+            )
+        
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "error": str(e)}
+        )
+
+
+@app.post("/auth/change-password")
+async def change_password(request: Request, payload: dict):
+    """Change user password"""
+    try:
+        user = require_auth(request)
+        user_id = user["user_id"]
+        
+        old_password = payload.get("old_password", "").strip()
+        new_password = payload.get("new_password", "").strip()
+        
+        if not old_password or not new_password:
+            return JSONResponse(
+                status_code=400,
+                content={"success": False, "error": "Old and new passwords are required"}
+            )
+        
+        result = auth_manager.change_password(user_id, old_password, new_password)
+        return JSONResponse(content=result)
+        
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"success": False, "error": e.detail}
+        )
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "error": str(e)}
+        )
+
+
+# ========================================
+# DOCUMENT HISTORY ENDPOINTS
+# ========================================
+
+@app.get("/documents/history")
+async def get_document_history(request: Request, limit: int = 50):
+    """Get user's document upload history"""
+    try:
+        user = require_auth(request)
+        user_id = user["user_id"]
+        
+        documents = doc_store.get_document_history(user_id, limit)
+        return JSONResponse(content={
+            "success": True,
+            "documents": documents
+        })
+        
+    except HTTPException as e:
+        return JSONResponse(
+            status_code=e.status_code,
+            content={"success": False, "error": e.detail}
+        )
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "error": str(e)}
+        )
 
 @app.get("/info")
 async def app_info():
