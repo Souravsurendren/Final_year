@@ -12,10 +12,20 @@ const AppState = {
     summaryType: 'extractive',
     selectedLanguage: 'en',
     labData: [],
+<<<<<<< HEAD
     labTrendsByCategory: {},
     latestLabValues: {},
     chatHistory: [],
     summaryContent: '',
+=======
+    labTrends: null,
+    latestLabs: {},
+    chatHistory: [],
+    summaryContent: '',
+    originalSummaryContent: '',
+    translatedSummaryContent: '',
+    nlpAnalysis: {},
+>>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
     visionResult: {},
     riskAssessment: {},
     suggestedQuestions: []
@@ -55,6 +65,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load initial data
     loadLabTrendsData();
     updateQuickStats();
+    updateLabTrendsSection();
+    updateDashboardHealth();
 });
 
 // ========================================
@@ -90,6 +102,13 @@ function navigateTo(sectionId) {
     
     // Update page title
     updatePageTitle(sectionId);
+
+    // Keep dashboard metrics fresh whenever user returns to dashboard
+    if (sectionId === 'dashboard') {
+        updateLabTrendsSection();
+        updateDashboardHealth();
+        updateQuickStats();
+    }
 }
 
 function updatePageTitle(sectionId) {
@@ -239,6 +258,12 @@ async function handleFileUpload(file) {
             
             // Store results
             AppState.summaryContent = data.summary || '';
+<<<<<<< HEAD
+=======
+            AppState.originalSummaryContent = data.summary || '';
+            AppState.translatedSummaryContent = '';
+            AppState.nlpAnalysis = data.nlp_analysis || {};
+>>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
             AppState.labData = data.lab_values?.values || [];
             AppState.riskAssessment = data.risk_profile || {};
             AppState.suggestedQuestions = data.chatbot?.suggested_questions || [];
@@ -251,7 +276,12 @@ async function handleFileUpload(file) {
             // Update UI
             updateSummarySection();
             updateSummaryStats(data.stats, data.summary_type);
+<<<<<<< HEAD
             updateLabTrendsSection();
+=======
+            updateNLPSection();
+            await updateLabTrendsSection();
+>>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
             updateRiskSection();
             updateQuickStats();
             updateChatSuggestions();
@@ -508,9 +538,11 @@ function updateSummarySection() {
     const summaryTextEl = document.getElementById('summaryContent');
     if (!summaryTextEl) return;
     
-    if (AppState.summaryContent) {
+    const contentToRender = AppState.translatedSummaryContent || AppState.summaryContent;
+
+    if (contentToRender) {
         // Parse markdown-like content
-        let html = AppState.summaryContent
+        let html = contentToRender
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/\n\n/g, '</p><p>')
             .replace(/\n- /g, '<li>')
@@ -555,13 +587,20 @@ function initLabTrends() {
     }
 }
 
+<<<<<<< HEAD
 async function loadLabTrendsData() {
     try {
         const [trendsResp, latestResp] = await Promise.all([
+=======
+async function fetchLabTrendData() {
+    try {
+        const [trendsRes, latestRes] = await Promise.all([
+>>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
             fetch('/lab-trends'),
             fetch('/lab-trends/latest')
         ]);
 
+<<<<<<< HEAD
         const trendsData = await trendsResp.json();
         const latestData = await latestResp.json();
 
@@ -655,38 +694,96 @@ function updateLabTrendsSection() {
     updateLabCards();
     const selectedTrend = document.getElementById('trendSelector')?.value || 'glucose';
     updateLabChart(selectedTrend);
+=======
+        const trendsData = await trendsRes.json();
+        const latestData = await latestRes.json();
+
+        AppState.labTrends = (trendsData && trendsData.success) ? trendsData : { success: false, trends: {}, available_labs: [] };
+        AppState.latestLabs = (latestData && latestData.success) ? (latestData.latest || {}) : {};
+    } catch (error) {
+        AppState.labTrends = { success: false, trends: {}, available_labs: [] };
+        AppState.latestLabs = {};
+    }
+}
+
+async function updateLabTrendsSection() {
+    await fetchLabTrendData();
+    updateLabCards();
+    const trendSelect = document.getElementById('trendSelector');
+    const selected = trendSelect ? trendSelect.value : 'glucose';
+    updateLabChart(selected);
+>>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
     updateLabHistoryTable();
+    updateDashboardHealth();
+}
+
+function normalizeLabKey(name) {
+    const value = (name || '').toLowerCase();
+    if (value.includes('hba1c') || value.includes('a1c')) return 'hba1c';
+    if (value.includes('glucose') || value.includes('sugar') || value.includes('fbg') || value.includes('fbs') || value.includes('rbs')) return 'glucose';
+    if (value.includes('systolic') || value.includes('diastolic') || value.includes('blood pressure') || value === 'bp') return 'bp';
+    if (value.includes('cholesterol') || value.includes('ldl') || value.includes('hdl') || value.includes('triglycerides')) return 'cholesterol';
+    return value;
+}
+
+function getLatestMappedValues() {
+    const mapped = {
+        glucose: null,
+        hba1c: null,
+        bp: { systolic: null, diastolic: null },
+        cholesterol: null
+    };
+
+    Object.entries(AppState.latestLabs || {}).forEach(([name, entry]) => {
+        const key = normalizeLabKey(name);
+        const val = entry?.value;
+        if (key === 'glucose' && mapped.glucose === null) mapped.glucose = val;
+        if (key === 'hba1c' && mapped.hba1c === null) mapped.hba1c = val;
+        if (key === 'cholesterol' && mapped.cholesterol === null) mapped.cholesterol = val;
+        if (key === 'bp') {
+            if ((name || '').toLowerCase().includes('systolic')) mapped.bp.systolic = val;
+            if ((name || '').toLowerCase().includes('diastolic')) mapped.bp.diastolic = val;
+        }
+    });
+
+    return mapped;
 }
 
 function updateLabCards() {
+    const latest = getLatestMappedValues();
     const cardData = [
         { 
             id: 'glucose', 
             name: 'Glucose', 
             unit: 'mg/dL', 
             normalRange: '70-100',
-            getValue: () => getLatestLabValue('glucose')
+            getValue: () => latest.glucose || getLatestLabValue('glucose')
         },
         { 
             id: 'hba1c', 
             name: 'HbA1c', 
             unit: '%', 
             normalRange: '< 5.7',
-            getValue: () => getLatestLabValue('hba1c')
+            getValue: () => latest.hba1c || getLatestLabValue('hba1c')
         },
         { 
             id: 'bp', 
             name: 'Blood Pressure', 
             unit: 'mmHg', 
             normalRange: '< 120/80',
-            getValue: () => getLatestLabValue('blood_pressure')
+            getValue: () => {
+                const sys = latest.bp?.systolic;
+                const dia = latest.bp?.diastolic;
+                if (sys && dia) return `${sys}/${dia}`;
+                return getLatestLabValue('blood_pressure') || getLatestLabValue('bp');
+            }
         },
         { 
-            id: 'cholesterol', 
+            id: 'chol', 
             name: 'Total Cholesterol', 
             unit: 'mg/dL', 
             normalRange: '< 200',
-            getValue: () => getLatestLabValue('cholesterol')
+            getValue: () => latest.cholesterol || getLatestLabValue('cholesterol')
         }
     ];
     
@@ -726,6 +823,7 @@ function capitalizeStatus(status) {
 }
 
 function getLatestLabValue(labType) {
+<<<<<<< HEAD
     const latest = AppState.latestLabValues || {};
 
     if (labType === 'glucose') return latest.glucose?.value ?? getLatestFromCategory('glucose')?.value ?? null;
@@ -757,10 +855,22 @@ function getLatestBpFromTrend() {
 
     const generic = bpEntries.pop();
     return generic ? generic.value : null;
+=======
+    const target = normalizeLabKey(labType);
+    const matching = (AppState.labData || [])
+        .filter(l => {
+            const nameKey = normalizeLabKey(l.name || l.type || '');
+            return nameKey === target;
+        })
+        .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+
+    return matching.length > 0 ? matching[0].value : null;
+>>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
 }
 
 function getValueStatus(type, value) {
     if (!value) return 'Normal';
+    const normalizedType = type === 'chol' ? 'cholesterol' : type;
     
     const ranges = {
         glucose: { low: 70, high: 100 },
@@ -768,7 +878,7 @@ function getValueStatus(type, value) {
         cholesterol: { low: 0, high: 200 }
     };
     
-    const range = ranges[type];
+    const range = ranges[normalizedType];
     if (!range) return 'Normal';
     
     const numValue = parseFloat(value);
@@ -780,8 +890,13 @@ function getValueStatus(type, value) {
 function updateLabChart(labType) {
     const ctx = document.getElementById('trendChart');
     if (!ctx) return;
+<<<<<<< HEAD
 
     const data = generateChartDataFromTrend(labType);
+=======
+    
+    const data = generateChartData(labType);
+>>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
     
     if (labChart) {
         labChart.destroy();
@@ -825,6 +940,7 @@ function updateLabChart(labType) {
     });
 }
 
+<<<<<<< HEAD
 function generateChartDataFromTrend(labType) {
     const values = AppState.labTrendsByCategory?.[labType] || [];
 
@@ -841,12 +957,31 @@ function generateChartDataFromTrend(labType) {
         return {
             labels: source.map((v) => formatTrendDate(v.date)),
             values: source.map((v) => Number(v.value))
+=======
+function generateChartData(labType) {
+    const trendMap = AppState.labTrends?.trends || {};
+    const entries = Object.entries(trendMap);
+    const matched = entries
+        .filter(([name]) => normalizeLabKey(name) === labType)
+        .flatMap(([, values]) => values || [])
+        .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+
+    if (matched.length > 0) {
+        return {
+            labels: matched.map(v => String(v.date || '').slice(5)),
+            values: matched.map(v => Number(v.value) || 0)
+>>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
         };
     }
 
     return {
+<<<<<<< HEAD
         labels: values.map((v) => formatTrendDate(v.date)),
         values: values.map((v) => Number(v.value))
+=======
+        labels: ['No Data'],
+        values: [0]
+>>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
     };
 }
 
@@ -859,8 +994,12 @@ function formatTrendDate(dateStr) {
 function updateLabHistoryTable() {
     const tbody = document.getElementById('labHistoryBody');
     if (!tbody) return;
-    
-    if (AppState.labData.length === 0) {
+
+    const trendMap = AppState.labTrends?.trends || {};
+    const flattened = Object.values(trendMap).flat();
+    const rows = flattened.length > 0 ? flattened : AppState.labData;
+
+    if (rows.length === 0) {
         tbody.innerHTML = `
             <tr class="empty-row">
                 <td colspan="5">No lab history available</td>
@@ -870,15 +1009,28 @@ function updateLabHistoryTable() {
     }
     
     let html = '';
+<<<<<<< HEAD
     AppState.labData.forEach(lab => {
         const status = (lab.status || 'normal').toLowerCase();
+=======
+    rows
+        .slice()
+        .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')))
+        .forEach(lab => {
+        const status = lab.status || 'Normal';
+>>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
         html += `
             <tr>
                 <td>${lab.date || 'N/A'}</td>
                 <td>${lab.name || 'N/A'}</td>
                 <td>${lab.value || 'N/A'} ${lab.unit || ''}</td>
+<<<<<<< HEAD
                 <td>${lab.reference || lab.reference_range || 'N/A'}</td>
                 <td><span class="value-status ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></td>
+=======
+                <td>${lab.reference_range || lab.reference || 'N/A'}</td>
+                <td><span class="value-status ${status.toLowerCase()}">${status}</span></td>
+>>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
             </tr>
         `;
     });
@@ -1013,8 +1165,10 @@ function initTranslate() {
 }
 
 async function translateSummary() {
-    const lang = AppState.selectedLanguage;
-    const content = AppState.summaryContent;
+    // Read language directly from dropdown to get current selection
+    const languageSelect = document.getElementById('languageSelect');
+    const lang = languageSelect ? languageSelect.value : 'en';
+    const content = AppState.originalSummaryContent || AppState.summaryContent;
     
     if (!content) {
         showToast('info', 'No Content', 'Upload a document first to translate');
@@ -1023,6 +1177,11 @@ async function translateSummary() {
     }
     
     if (lang === 'en' || !lang) {
+        const summarySection = document.getElementById('summaryContent');
+        AppState.translatedSummaryContent = '';
+        if (summarySection) {
+            summarySection.innerHTML = formatSummaryDisplay(content);
+        }
         updateTranslationContent(content);
         return;
     }
@@ -1042,7 +1201,13 @@ async function translateSummary() {
         const data = await response.json();
         
         if (response.ok) {
-            updateTranslationContent(data.translated_text || content);
+            const translated = data.translated_text || content;
+            const summarySection = document.getElementById('summaryContent');
+            AppState.translatedSummaryContent = translated;
+            if (summarySection) {
+                summarySection.innerHTML = formatSummaryDisplay(translated);
+            }
+            updateTranslationContent(translated);
         } else {
             throw new Error(data.detail || 'Translation failed');
         }
@@ -1072,6 +1237,7 @@ function updateTranslationContent(text) {
     }
 }
 
+<<<<<<< HEAD
 function renderTranslationMarkup(text) {
     const safeText = String(text || '');
     if (window.marked && typeof window.marked.parse === 'function') {
@@ -1089,6 +1255,48 @@ function renderTranslationMarkup(text) {
         .split(/\n{2,}/)
         .map(block => `<p>${escapeHtml(block).replace(/\n/g, '<br>')}</p>`)
         .join('');
+=======
+// Handle language dropdown change - sync AppState and trigger translation
+async function handleLanguageChange() {
+    const languageSelect = document.getElementById('languageSelect');
+    if (!languageSelect) return;
+    
+    const selectedLanguage = languageSelect.value;
+    AppState.selectedLanguage = selectedLanguage; // Keep AppState in sync
+    
+    // If English is selected, just show original content in summary section
+    if (selectedLanguage === 'en') {
+        const summarySection = document.getElementById('summaryContent');
+        if (summarySection && AppState.summaryContent) {
+            summarySection.innerHTML = formatSummaryDisplay(AppState.summaryContent);
+        }
+        updateTranslationContent('');
+        return;
+    }
+    
+    // For other languages, call translateSummary which now reads from dropdown
+    await translateSummary();
+}
+
+// Helper to format summary for display with proper styling
+function formatSummaryDisplay(text) {
+    if (!text) return '';
+    
+    let html = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/__(.+?)__/g, '<strong>$1</strong>')
+        .replace(/_(.*?)_/g, '<em>$1</em>')
+        .replace(/^### (.*?)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.*?)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.*?)$/gm, '<h1>$1</h1>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n/g, '<br>');
+    
+    return `<p>${html}</p>`;
+>>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
 }
 
 // ========================================
@@ -1275,11 +1483,14 @@ function updateDashboardHealth() {
     const cholEl = document.getElementById('dashChol');
     const healthRing = document.getElementById('healthRing');
     
-    // Get latest values from lab data
-    const glucose = getLatestLabValue('glucose');
-    const hba1c = getLatestLabValue('hba1c');
-    const bp = getLatestLabValue('blood_pressure') || getLatestLabValue('bp');
-    const chol = getLatestLabValue('cholesterol');
+    // Get latest values from persisted lab trend data first, then fallback to current upload data
+    const latest = getLatestMappedValues();
+    const glucose = latest.glucose || getLatestLabValue('glucose');
+    const hba1c = latest.hba1c || getLatestLabValue('hba1c');
+    const bp = latest.bp?.systolic && latest.bp?.diastolic
+        ? `${latest.bp.systolic}/${latest.bp.diastolic}`
+        : (getLatestLabValue('blood_pressure') || getLatestLabValue('bp'));
+    const chol = latest.cholesterol || getLatestLabValue('cholesterol');
     
     if (glucoseEl) glucoseEl.textContent = glucose || '--';
     if (hba1cEl) hba1cEl.textContent = hba1c || '--';
@@ -1298,9 +1509,15 @@ function updateDashboardHealth() {
     if (factors > 0 && !glucose && !hba1c && !chol) score = 0;
     else if (factors > 0) score = Math.round((score / (factors * 25)) * 100);
     
-    // Animate health ring
+    // Animate health ring and score label
     if (healthRing && factors > 0) {
         healthRing.style.strokeDasharray = `${score}, 100`;
+        healthRing.setAttribute('stroke-dasharray', `${score}, 100`);
+    }
+
+    const scoreEl = document.querySelector('.health-card .metric-value span');
+    if (scoreEl) {
+        scoreEl.textContent = factors > 0 ? String(score) : '--';
     }
 }
 
@@ -1309,6 +1526,11 @@ function updateDashboardHealth() {
 // ========================================
 function translateTo(language) {
     AppState.selectedLanguage = language;
+
+    const languageSelect = document.getElementById('languageSelect');
+    if (languageSelect) {
+        languageSelect.value = language;
+    }
     
     // Update active button state
     document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -1324,7 +1546,7 @@ function translateTo(language) {
 function getLanguageName(code) {
     const names = {
         'hi': 'Hindi', 'ta': 'Tamil', 'te': 'Telugu', 'kn': 'Kannada',
-        'ml': 'Malayalam', 'es': 'Spanish', 'fr': 'French', 'de': 'German'
+        'ml': 'Malayalam'
     };
     return names[code] || code;
 }
@@ -1334,6 +1556,7 @@ function getLanguageName(code) {
 // ========================================
 async function clearLabHistory() {
     try {
+<<<<<<< HEAD
         const response = await fetch('/lab-trends/clear', {
             method: 'POST'
         });
@@ -1347,6 +1570,25 @@ async function clearLabHistory() {
         showToast('success', 'Cleared', 'Lab history has been cleared');
     } catch (error) {
         showToast('error', 'Error', error.message || 'Could not clear lab history');
+=======
+        const response = await fetch('/lab-trends/clear', { method: 'POST' });
+        const result = await response.json();
+        if (!response.ok || !result.success) {
+            throw new Error(result.error || result.message || 'Failed to clear lab history');
+        }
+
+        AppState.labData = [];
+        AppState.labTrends = { success: true, trends: {}, available_labs: [] };
+        AppState.latestLabs = {};
+        updateLabCards();
+        updateLabChart('glucose');
+        updateLabHistoryTable();
+        updateDashboardHealth();
+        updateQuickStats();
+        showToast('success', 'Cleared', 'Lab history has been cleared');
+    } catch (error) {
+        showToast('error', 'Error', error.message);
+>>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
     }
 }
 
@@ -1362,6 +1604,7 @@ window.askQuestion = askQuestion;
 window.toggleTheme = toggleTheme;
 window.translateTo = translateTo;
 window.translateSummary = translateSummary;
+window.handleLanguageChange = handleLanguageChange;
 window.sendMessage = sendChatMessage;
 window.clearLabHistory = clearLabHistory;
 window.logout = logout;

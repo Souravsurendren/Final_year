@@ -6,6 +6,7 @@ Extract lab values from medical reports and track trends over time
 import re
 import json
 import time
+import unicodedata
 from datetime import datetime
 from typing import Dict, Any, List, Optional, Tuple
 from pathlib import Path
@@ -160,6 +161,22 @@ LAB_PATTERNS = {
     },
 }
 
+# Generic aliases for a final fallback pass when report formatting is irregular
+LAB_ALIASES = {
+    "HbA1c": [r"hba1c", r"\ba1c\b", r"glyc(?:ated|osylated)\s+h[ae]moglobin"],
+    "Fasting Glucose": [r"fasting\s+(?:blood\s+)?glucose", r"\bfbs\b", r"\bfbg\b", r"fasting\s+sugar"],
+    "Random Glucose": [r"random\s+(?:blood\s+)?glucose", r"\brbs\b", r"blood\s+sugar"],
+    "Systolic BP": [r"systolic", r"\bsys\b"],
+    "Diastolic BP": [r"diastolic", r"\bdia\b"],
+    "Total Cholesterol": [r"total\s+cholesterol", r"\bcholesterol\b", r"\btc\b"],
+    "HDL Cholesterol": [r"\bhdl\b"],
+    "LDL Cholesterol": [r"\bldl\b"],
+    "Triglycerides": [r"triglycerides?", r"\btg\b"],
+    "Creatinine": [r"(?:serum\s+)?creatinine"],
+    "Hemoglobin": [r"h[ae]moglobin", r"\bhgb\b", r"\bhb\b"],
+    "eAG": [r"estimated\s+average\s+glucose", r"\beag\b", r"mean\s+blood\s+glucose"]
+}
+
 
 # ============================================================================
 # DATE EXTRACTION PATTERNS
@@ -255,19 +272,208 @@ class LabTrendAnalyzer:
         
         # Return today's date if no date found
         return datetime.now().strftime("%Y-%m-%d")
+
+    def _normalize_text_for_extraction(self, text: str) -> str:
+        """Normalize OCR/table text so regex extraction is more resilient."""
+        if not text:
+            return ""
+
+        normalized = unicodedata.normalize("NFKC", text)
+        normalized = normalized.replace("\u00a0", " ")
+        normalized = normalized.replace("\r", "\n")
+        normalized = normalized.replace("mm hg", "mmhg")
+        normalized = normalized.replace("mg/dl", "mgdl")
+        normalized = normalized.replace("mmol/l", "mmoll")
+        normalized = re.sub(r"[\t|]+", " ", normalized)
+        normalized = re.sub(r"\s+", " ", normalized)
+        return normalized.strip()
+
+    def _convert_to_standard_unit(self, lab_name: str, value: float, context: str) -> Tuple[float, str]:
+        """Convert common alternative units into the canonical unit used in LAB_PATTERNS."""
+        text = (context or "").lower()
+        cfg = LAB_PATTERNS.get(lab_name, {})
+        unit = cfg.get("unit", "")
+
+        # Glucose-family mmol/L to mg/dL conversion
+        if lab_name in {"Fasting Glucose", "Random Glucose", "eAG"} and "mmoll" in text:
+            return round(value * 18.0, 2), "mg/dL"
+
+        # Cholesterol-family mmol/L to mg/dL conversion
+        if lab_name in {"Total Cholesterol", "HDL Cholesterol", "LDL Cholesterol"} and "mmoll" in text:
+            return round(value * 38.67, 2), "mg/dL"
+
+        # Triglycerides mmol/L to mg/dL conversion
+        if lab_name == "Triglycerides" and "mmoll" in text:
+            return round(value * 88.57, 2), "mg/dL"
+
+        # Keep configured/default unit otherwise
+        return value, unit
+
+    def _dedupe_extracted(self, values: List[LabValue]) -> List[LabValue]:
+        """Keep the first value per lab name to avoid duplicate rows from multi-pass extraction."""
+        unique: Dict[str, LabValue] = {}
+        for item in values:
+            if item.name not in unique:
+                unique[item.name] = item
+        return list(unique.values())
+
+    def _generic_alias_extract(self, normalized_text: str, date: str, source_file: str, extracted: List[LabValue]) -> List[LabValue]:
+        """Final fallback: alias + nearby number extraction for irregular report lines/tables."""
+        extracted_names = {v.name for v in extracted}
+
+        for lab_name, alias_patterns in LAB_ALIASES.items():
+            if lab_name in extracted_names:
+                continue
+
+            cfg = LAB_PATTERNS.get(lab_name, {})
+            for alias in alias_patterns:
+                # Capture a short window after the alias and pick the first plausible number.
+                pattern = rf"(?:{alias})[^0-9\n]{{0,40}}(\d{{1,3}}(?:\.\d+)?)"
+                match = re.search(pattern, normalized_text, re.IGNORECASE)
+                if not match:
+                    continue
+
+                try:
+                    raw_value = float(match.group(1))
+                except ValueError:
+                    continue
+
+                context_start = max(0, match.start() - 20)
+                context_end = min(len(normalized_text), match.end() + 30)
+                context = normalized_text[context_start:context_end]
+
+                value, unit = self._convert_to_standard_unit(lab_name, raw_value, context)
+                status = self._determine_status(value, cfg.get("ranges", {}), lab_name)
+
+                extracted.append(LabValue(
+                    name=lab_name,
+                    value=value,
+                    unit=unit or cfg.get("unit", ""),
+                    date=date,
+                    reference_range=cfg.get("reference", ""),
+                    status=status,
+                    source_file=source_file
+                ))
+                extracted_names.add(lab_name)
+                break
+
+        return extracted
+
+    def _fallback_extract_values(self, normalized_text: str, date: str, source_file: str, extracted: List[LabValue]) -> List[LabValue]:
+        """Second-pass extraction for table-like reports and unit-optional formats."""
+        extracted_names = {v.name for v in extracted}
+
+        fallback_patterns = {
+            "HbA1c": [
+                r"(?:hba1c|a1c|glyc(?:ated|osylated)\s+h[ae]moglobin)[^\n]{0,50}?(\d{1,2}(?:\.\d+)?)\s*%?",
+                r"hba1c\s*\(%\)\s*[:\-]?\s*(\d{1,2}(?:\.\d+)?)"
+            ],
+            "Fasting Glucose": [
+                r"(?:fasting\s+(?:blood\s+)?glucose|fbs|fbg|fasting\s+sugar)[^\n]{0,60}?(\d{2,3}(?:\.\d+)?)\s*(?:mg/dl|mg%)?"
+            ],
+            "Random Glucose": [
+                r"(?:random\s+(?:blood\s+)?glucose|rbs|blood\s+sugar)[^\n]{0,60}?(\d{2,3}(?:\.\d+)?)\s*(?:mg/dl|mg%)?"
+            ],
+            "Total Cholesterol": [
+                r"(?:total\s+cholesterol|cholesterol|tc)[^\n]{0,60}?(\d{2,3}(?:\.\d+)?)\s*(?:mg/dl|mg%)?"
+            ],
+            "Triglycerides": [
+                r"(?:triglycerides?|tg)[^\n]{0,60}?(\d{2,3}(?:\.\d+)?)\s*(?:mg/dl|mg%)?"
+            ],
+            "Creatinine": [
+                r"(?:serum\s+)?creatinine[^\n]{0,60}?(\d(?:\.\d+)?)\s*(?:mg/dl|mg%)?"
+            ],
+            "Hemoglobin": [
+                r"(?:h[ae]moglobin|hgb|hb)[^\n]{0,60}?(\d{1,2}(?:\.\d+)?)\s*(?:g/dl|gm/dl|g%)?"
+            ],
+            "eAG": [
+                r"(?:estimated\s+average\s+glucose|mean\s+blood\s+glucose|eag)[^\n]{0,60}?(\d{2,3}(?:\.\d+)?)\s*(?:mg/dl|mg%)?"
+            ]
+        }
+
+        for lab_name, patterns in fallback_patterns.items():
+            if lab_name in extracted_names:
+                continue
+
+            config = LAB_PATTERNS.get(lab_name, {})
+            for pattern in patterns:
+                match = re.search(pattern, normalized_text, re.IGNORECASE)
+                if not match:
+                    continue
+
+                try:
+                    raw_value = float(match.group(1))
+                except ValueError:
+                    continue
+
+                context_start = max(0, match.start() - 20)
+                context_end = min(len(normalized_text), match.end() + 30)
+                context = normalized_text[context_start:context_end]
+                value, unit = self._convert_to_standard_unit(lab_name, raw_value, context)
+
+                status = self._determine_status(value, config.get("ranges", {}), lab_name)
+                extracted.append(LabValue(
+                    name=lab_name,
+                    value=value,
+                    unit=unit or config.get("unit", ""),
+                    date=date,
+                    reference_range=config.get("reference", ""),
+                    status=status,
+                    source_file=source_file
+                ))
+                extracted_names.add(lab_name)
+                break
+
+        # Blood pressure table rows often appear as a single "120/80" token.
+        bp_match = re.search(r"(?:blood\s*pressure|\bbp\b)[^\n]{0,40}?(\d{2,3})\s*/\s*(\d{2,3})", normalized_text, re.IGNORECASE)
+        if bp_match:
+            systolic = float(bp_match.group(1))
+            diastolic = float(bp_match.group(2))
+
+            if "Systolic BP" not in extracted_names:
+                systolic_cfg = LAB_PATTERNS.get("Systolic BP", {})
+                extracted.append(LabValue(
+                    name="Systolic BP",
+                    value=systolic,
+                    unit=systolic_cfg.get("unit", "mmHg"),
+                    date=date,
+                    reference_range=systolic_cfg.get("reference", ""),
+                    status=self._determine_status(systolic, systolic_cfg.get("ranges", {}), "Systolic BP"),
+                    source_file=source_file
+                ))
+                extracted_names.add("Systolic BP")
+
+            if "Diastolic BP" not in extracted_names:
+                diastolic_cfg = LAB_PATTERNS.get("Diastolic BP", {})
+                extracted.append(LabValue(
+                    name="Diastolic BP",
+                    value=diastolic,
+                    unit=diastolic_cfg.get("unit", "mmHg"),
+                    date=date,
+                    reference_range=diastolic_cfg.get("reference", ""),
+                    status=self._determine_status(diastolic, diastolic_cfg.get("ranges", {}), "Diastolic BP"),
+                    source_file=source_file
+                ))
+
+        return extracted
     
     def extract_lab_values(self, text: str, source_file: str = "") -> List[LabValue]:
         """Extract all lab values from text"""
-        text_lower = text.lower()
+        normalized_text = self._normalize_text_for_extraction(text)
         extracted = []
         date = self.extract_date(text)
         
         for lab_name, config in LAB_PATTERNS.items():
             for pattern in config['patterns']:
-                match = re.search(pattern, text_lower)
+                match = re.search(pattern, normalized_text, re.IGNORECASE)
                 if match:
                     try:
-                        value = float(match.group(1))
+                        raw_value = float(match.group(1))
+
+                        context_start = max(0, match.start() - 20)
+                        context_end = min(len(normalized_text), match.end() + 30)
+                        context = normalized_text[context_start:context_end]
+                        value, unit = self._convert_to_standard_unit(lab_name, raw_value, context)
                         
                         # Determine status based on ranges
                         status = self._determine_status(value, config.get('ranges', {}), lab_name)
@@ -275,7 +481,7 @@ class LabTrendAnalyzer:
                         lab_value = LabValue(
                             name=lab_name,
                             value=value,
-                            unit=config['unit'],
+                            unit=unit or config['unit'],
                             date=date,
                             reference_range=config['reference'],
                             status=status,
@@ -285,6 +491,15 @@ class LabTrendAnalyzer:
                         break  # Found a match, move to next lab type
                     except ValueError:
                         continue
+
+        # Fallback pass for report/table formats that don't match strict patterns.
+        extracted = self._fallback_extract_values(normalized_text, date, source_file, extracted)
+
+        # Final alias-based pass for difficult layouts
+        extracted = self._generic_alias_extract(normalized_text, date, source_file, extracted)
+
+        # De-duplicate possible overlaps across passes
+        extracted = self._dedupe_extracted(extracted)
         
         return extracted
     
