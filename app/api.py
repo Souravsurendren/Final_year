@@ -44,16 +44,14 @@ from .lab_trends import (
 )
 from .translator import translate_summary
 from .risk_calculator import calculate_risks
-<<<<<<< HEAD
+
 from .auth import AuthManager
 from .auth_middleware import AuthMiddleware, get_current_user, require_auth
 from .document_store import DocumentStore
-=======
-<<<<<<< HEAD
 from .auth import AuthManager
 from .auth_middleware import AuthMiddleware, get_current_user, require_auth
 from .document_store import DocumentStore
-=======
+
 from .services.rag_service import (
     ask_multimodal as ask_multimodal_rag,
     ask_with_explainable_rag,
@@ -63,8 +61,6 @@ from .services.retrieval_service import adaptive_hybrid_search
 from .services.explainability import build_evidence_payload, attribute_answer_to_evidence
 from .services.fact_checker import verify_output
 from .services.confidence import compute_confidence
->>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
->>>>>>> 60ebcb446ea456efba9f22156a4552bb5d19a3ab
 
 app = FastAPI(title="MedRAG Open Source API", version="2.0.0", description="Open source medical document analysis platform")
 
