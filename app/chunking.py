@@ -1,4 +1,4 @@
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from .config import CHUNK_TOKENS, CHUNK_OVERLAP
 from .utils import make_id, write_json
 from pathlib import Path

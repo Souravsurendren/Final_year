@@ -10,7 +10,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<<<<<<< HEAD
     <link rel="stylesheet" href="/static/css/dashboard.css?v=6">
+=======
+    <link rel="stylesheet" href="/static/css/dashboard.css?v=8">
+>>>>>>> 60ebcb446ea456efba9f22156a4552bb5d19a3ab
 </head>
 <body>
     <!-- ============================================ -->
@@ -326,12 +330,31 @@
                         <h2><i class="fas fa-file-medical-alt"></i> Document Summary</h2>
                     </div>
                     <div class="summary-actions">
+<<<<<<< HEAD
                         <select class="lang-select" id="summaryLangSelect" onchange="translateSummaryInline()">
                             <option value="en">🇬🇧 English</option>
                             <option value="hi">🇮🇳 Hindi</option>
                             <option value="ta">🇮🇳 Tamil</option>
                             <option value="te">🇮🇳 Telugu</option>
                             <option value="es">🇪🇸 Spanish</option>
+=======
+<<<<<<< HEAD
+                        <select class="lang-select" id="summaryLangSelect" onchange="translateSummaryInline()">
+                            <option value="en">🇬🇧 English</option>
+                            <option value="hi">🇮🇳 Hindi</option>
+                            <option value="ta">🇮🇳 Tamil</option>
+                            <option value="te">🇮🇳 Telugu</option>
+                            <option value="es">🇪🇸 Spanish</option>
+=======
+                        <select id="languageSelect" class="language-select" onchange="handleLanguageChange()">
+                            <option value="en">🇺🇸 English</option>
+                            <option value="hi">🇮🇳 Hindi</option>
+                            <option value="ta">🇮🇳 Tamil</option>
+                            <option value="te">🇮🇳 Telugu</option>
+                            <option value="kn">🇮🇳 Kannada</option>
+                            <option value="ml">🇮🇳 Malayalam</option>
+>>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
+>>>>>>> 60ebcb446ea456efba9f22156a4552bb5d19a3ab
                         </select>
                         <button class="btn-icon" onclick="copySummary()" title="Copy Summary"><i class="fas fa-copy"></i></button>
                         <button class="btn-icon" onclick="exportPDF()" title="Export PDF"><i class="fas fa-download"></i></button>
@@ -607,11 +630,40 @@
                         Select a language below to translate the current summary. Medical terms and numbers are preserved for accuracy.
                     </div>
                     <div class="language-grid">
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 60ebcb446ea456efba9f22156a4552bb5d19a3ab
                         <button class="lang-btn" onclick="translateTo('hi')"><span class="lang-flag">🇮🇳</span><span class="lang-name">Hindi</span></button>
                         <button class="lang-btn" onclick="translateTo('ta')"><span class="lang-flag">🇮🇳</span><span class="lang-name">Tamil</span></button>
                         <button class="lang-btn" onclick="translateTo('te')"><span class="lang-flag">🇮🇳</span><span class="lang-name">Telugu</span></button>
                         <button class="lang-btn" onclick="translateTo('kn')"><span class="lang-flag">🇮🇳</span><span class="lang-name">Kannada</span></button>
                         <button class="lang-btn" onclick="translateTo('ml')"><span class="lang-flag">🇮🇳</span><span class="lang-name">Malayalam</span></button>
+<<<<<<< HEAD
+=======
+=======
+                        <button class="lang-btn" onclick="translateTo('hi')">
+                            <span class="lang-flag">🇮🇳</span>
+                            <span class="lang-name">Hindi</span>
+                        </button>
+                        <button class="lang-btn" onclick="translateTo('ta')">
+                            <span class="lang-flag">🇮🇳</span>
+                            <span class="lang-name">Tamil</span>
+                        </button>
+                        <button class="lang-btn" onclick="translateTo('te')">
+                            <span class="lang-flag">🇮🇳</span>
+                            <span class="lang-name">Telugu</span>
+                        </button>
+                        <button class="lang-btn" onclick="translateTo('kn')">
+                            <span class="lang-flag">🇮🇳</span>
+                            <span class="lang-name">Kannada</span>
+                        </button>
+                        <button class="lang-btn" onclick="translateTo('ml')">
+                            <span class="lang-flag">🇮🇳</span>
+                            <span class="lang-name">Malayalam</span>
+                        </button>
+>>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
+>>>>>>> 60ebcb446ea456efba9f22156a4552bb5d19a3ab
                     </div>
                     <div class="translated-content" id="translatedContent">
                         <div class="empty-state small">

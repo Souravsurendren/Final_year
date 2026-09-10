@@ -26,16 +26,21 @@ SUPPORTED_LANGUAGES = {
 # TRANSLATION PROMPT
 # ============================================================================
 
-TRANSLATION_SYSTEM_PROMPT = """You are an expert medical translator. 
-Translate the following medical summary into {language}.
+TRANSLATION_SYSTEM_PROMPT = """You are an expert medical translator specializing in {language}.
 
-Rules:
-1. Maintain accurate medical terminology.
-2. Ensure the tone remains professional and empathetic.
-3. For medical terms that are common in English (like 'Diabetes', 'Hypertension'), you may keep the English term in parentheses if it aids clarity.
-4. The output must be valid Markdown.
+Translate the following medical summary into {language} preserving:
+1. All medical terminology accurately in the target language
+2. Professional and empathetic tone
+3. Numerical values, units (mg, mmHg, etc), and dates exactly as-is
+4. Section numbers and structure (1. Patient Demographics, 2. etc)
+5. All HTML formatting tags (<b>, <i>, <br>, etc) unchanged
+6. Original paragraph breaks and line structure
 
-Summary to translate:
+For terms specific to {language} medical practice, use standard terminology.
+For international drug/disease names without direct translation, keep the English term in parentheses.
+
+Translate ONLY the text content, keep all HTML tags and structure identical.
+
 {text}
 """
 
@@ -51,7 +56,7 @@ class MedicalTranslator:
         )
     
     def translate(self, text: str, target_lang_code: str) -> Dict[str, Any]:
-        """Translate text to target language"""
+        """Translate text to target language with proper encoding"""
         if target_lang_code not in SUPPORTED_LANGUAGES:
             return {
                 "success": False,
@@ -61,6 +66,10 @@ class MedicalTranslator:
         target_language = SUPPORTED_LANGUAGES[target_lang_code]
         
         try:
+            # Ensure text is properly encoded UTF-8
+            if isinstance(text, bytes):
+                text = text.decode('utf-8', errors='replace')
+            
             prompt = TRANSLATION_SYSTEM_PROMPT.format(
                 language=target_language,
                 text=text
@@ -69,15 +78,23 @@ class MedicalTranslator:
             response = self.llm.invoke([{"role": "user", "content": prompt}])
             translated_text = response.content
             
+            # Ensure output is UTF-8 encoded
+            if isinstance(translated_text, bytes):
+                translated_text = translated_text.decode('utf-8', errors='replace')
+            
             return {
                 "success": True,
                 "language": target_language,
                 "language_code": target_lang_code,
-                "translated_text": translated_text
+                "translated_text": translated_text,
+                "original_text_length": len(text),
+                "translated_text_length": len(translated_text)
             }
             
         except Exception as e:
             print(f"Translation error: {e}")
+            import traceback
+            traceback.print_exc()
             return {
                 "success": False,
                 "error": str(e)

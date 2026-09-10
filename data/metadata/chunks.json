@@ -1,20 +1,42 @@
 [
   {
+<<<<<<< HEAD
     "chunk_id": "c_a859ed4616bb",
     "page_id": "p_54a55cb5729e",
+=======
+<<<<<<< HEAD
+    "chunk_id": "c_a859ed4616bb",
+    "page_id": "p_54a55cb5729e",
+=======
+    "chunk_id": "c_078e6155d8d0",
+    "page_id": "p_16526f895eda",
+>>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
+>>>>>>> 60ebcb446ea456efba9f22156a4552bb5d19a3ab
     "page_index": 1,
     "order": 0,
     "text": "HbA1c (GLYCOSYLATED Hb)\n7.5 *\n%\nNormal : 4.0 - 6.0\nGood Control : 6.01 - 7.0\nFair Control : 7.01 - 8.0\nPoor Control : > 8.01\n(HPLC)\nMEAN BLOOD GLUCOSE\n190.0 *\nmg/dl\nRef:Dr. Richard K. Bernstein\nformula.\nESTIMATED AVERAGE GLUCOSE\n165.0 *\nmg/dL\nNational Glycohemoglobin\nstandardization Program\n(NGSP)\nformula. (calculation)\nInterpretation :\n1. HbA1c is used for monitoring diabetic control. It reflects the estimated average glucose (eAG).\n2. HbA1c has been endorsed by clinical groups & ADA (American Diabetes Association) guidelines 2017, for diagnosis\n    of diabetes using a cut-off point of 6.5%.\n3. Trends in HbA1c are a better indicator of diabetic control than a solitary test.\nDispatched by: Santhiya. S\n**** End of Report ****\nPrinted by: JANANI.N on 15-12-2025 at 08:37 AM\nName\n:   Mrs. SARASWATHI\nREG/LAB NO.\n:   25110655 / 39408\nAGE/SEX\n:   47 Yrs / Female\nDATE OF COLLECTION :   14-12-2025 at 07:59 AM\nREFERRED BY :   SELF\nDATE OF REPORT\n:   14-12-2025 at 04:43 PM\nREF CENTER\n:   TECHNO DIAGNOSTICS & LAB\nBILL NO.\n:   039807\nCONTACT NO. :   9788736678\nTEST PARAMETER\nRESULT\nUNIT\nREFERENCE RANGE\nS. Santhiya\nB. Sc, Clinical lab Technology\nLAB INCHARGE\nRajasekar N\nDMLT , D pharm",
     "start_char": 0,
-    "end_char": 1189
+    "end_char": 1189,
+    "source_document": "saraswathi_47_Yrs_female_39408.pdf"
   },
   {
+<<<<<<< HEAD
     "chunk_id": "c_94ec371768e1",
     "page_id": "p_54a55cb5729e",
+=======
+<<<<<<< HEAD
+    "chunk_id": "c_94ec371768e1",
+    "page_id": "p_54a55cb5729e",
+=======
+    "chunk_id": "c_d05bd0f0fcd0",
+    "page_id": "p_16526f895eda",
+>>>>>>> 39c87361d1bd8d1f6b77f858059bbda69eaa180b
+>>>>>>> 60ebcb446ea456efba9f22156a4552bb5d19a3ab
     "page_index": 1,
     "order": 1,
     "text": "TEST PARAMETER\nRESULT\nUNIT\nREFERENCE RANGE\nS. Santhiya\nB. Sc, Clinical lab Technology\nLAB INCHARGE\nRajasekar N\nDMLT , D pharm\nHead of the Laboratory service\nPage 1 of 1",
     "start_char": -1,
-    "end_char": 1189
+    "end_char": 1189,
+    "source_document": "saraswathi_47_Yrs_female_39408.pdf"
   }
 ]

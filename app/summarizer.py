@@ -1,4 +1,4 @@
-import math, time
+import math, time, re
 from pathlib import Path
 from langchain_nvidia_ai_endpoints import ChatNVIDIA
 from .config import SUMMARIZE_BATCH_TOKENS
@@ -90,6 +90,38 @@ def call_nvidia_llm(messages, temperature=0.5, max_retries=3):
     # If we get here, all retries failed
     raise Exception("Failed to get response from NVIDIA API after all retries")
 
+def format_summary_text(text):
+    """Convert markdown-style markers to HTML bold/italic and preserve line breaks."""
+    # First, preserve line breaks by converting \n to placeholder
+    text = text.replace('\n', '\x00NEWLINE\x00')
+    
+    # Convert ***text*** to <b><i>text</i></b>
+    text = re.sub(r'\*\*\*(.+?)\*\*\*', r'<b><i>\1</i></b>', text, flags=re.DOTALL)
+    # Convert **text** to <b>text</b>
+    text = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text, flags=re.DOTALL)
+    # Convert *text* to <i>text</i>
+    text = re.sub(r'\*(.+?)\*', r'<i>\1</i>', text, flags=re.DOTALL)
+    # Convert __text__ to <b>text</b>
+    text = re.sub(r'__(.+?)__', r'<b>\1</b>', text, flags=re.DOTALL)
+    # Convert _text_ to <i>text</i>  (not within words)
+    text = re.sub(r'(?<!\w)_(.+?)_(?!\w)', r'<i>\1</i>', text, flags=re.DOTALL)
+    # Remove any leftover stray * that aren't part of patterns
+    text = re.sub(r'(?<!\w)\*(?!\*)', '', text)
+    
+    # Convert numbered lists - preserve indentation
+    lines = text.split('\x00NEWLINE\x00')
+    formatted_lines = []
+    for line in lines:
+        # Preserve indentation for continuations
+        if line.strip():
+            # Convert lines starting with numbers to proper format
+            line = re.sub(r'^(\s*)(\d+)\.\s+', r'\1<strong>\2.</strong> ', line)
+        formatted_lines.append(line)
+    
+    # Restore line breaks as HTML <br> tags
+    text = '<br>'.join(formatted_lines)
+    return text
+
 def map_reduce_summarize(chunks, final_context_limit=SUMMARIZE_BATCH_TOKENS):
     """
     chunks: list of chunk dicts (ordered)
@@ -133,6 +165,9 @@ def map_reduce_summarize(chunks, final_context_limit=SUMMARIZE_BATCH_TOKENS):
         {"role":"user","content": f"Create a comprehensive, well-structured medical summary by consolidating these section summaries. Organize with proper medical headings and ensure all important clinical details are preserved:\n\n{combined}"}
     ]
     final_summary = call_nvidia_llm(messages)
+    
+    # Clean markdown markers and convert to HTML formatting
+    final_summary = format_summary_text(final_summary)
     
     # store audit
     write_json(Path("logs") / f"summary_{int(time.time())}.json", {"intermediate": intermediate_summaries, "consolidated": combined, "final": final_summary})
