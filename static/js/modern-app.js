@@ -1210,18 +1210,13 @@ function translateReport() {
     const summaryContent = document.getElementById('summaryContent');
     const summaryTypeLabel = document.getElementById('summaryTypeLabel');
 
-    // Store original summary if not stored yet
-    if (!originalSummary && lang === 'en') {
-        // It might be already populated with markdown, we can get it from there?
-        // Actually best to store it when result comes.
-        // But for now, let's assume if it's currently English, it is the original
+    // Always store original summary if not yet captured
+    if (!originalSummary) {
         originalSummary = summaryContent.innerHTML;
     }
 
     if (lang === 'en') {
-        if (originalSummary) {
-            summaryContent.innerHTML = originalSummary;
-        }
+        summaryContent.innerHTML = originalSummary;
         summaryTypeLabel.textContent = 'AI Abstractive';
         return;
     }

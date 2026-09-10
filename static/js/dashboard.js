@@ -12,9 +12,10 @@ const AppState = {
     summaryType: 'extractive',
     selectedLanguage: 'en',
     labData: [],
+    labTrendsByCategory: {},
+    latestLabValues: {},
     chatHistory: [],
     summaryContent: '',
-    nlpAnalysis: {},
     visionResult: {},
     riskAssessment: {},
     suggestedQuestions: []
@@ -41,6 +42,7 @@ const DOM = {
 // ========================================
 document.addEventListener('DOMContentLoaded', () => {
     DOM.init();
+    checkAuthentication();
     initNavigation();
     initTheme();
     initUpload();
@@ -51,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initNLPTabs();
     
     // Load initial data
+    loadLabTrendsData();
     updateQuickStats();
 });
 
@@ -80,7 +83,9 @@ function navigateTo(sectionId) {
     DOM.sections.forEach(section => {
         section.classList.toggle('active', section.id === fullSectionId);
     });
-    
+    if (sectionId === 'profile') {
+        loadUserProfile();
+    }
     AppState.currentSection = sectionId;
     
     // Update page title
@@ -92,12 +97,12 @@ function updatePageTitle(sectionId) {
         'dashboard': { title: 'Dashboard', breadcrumb: 'Overview' },
         'upload': { title: 'Upload Document', breadcrumb: 'Analysis > Upload' },
         'summary': { title: 'Document Summary', breadcrumb: 'Analysis > Summary' },
-        'nlp': { title: 'NLP Analysis', breadcrumb: 'Analysis > NLP' },
         'vision': { title: 'Medical Imaging', breadcrumb: 'Analysis > Vision' },
         'trends': { title: 'Lab Trends', breadcrumb: 'Tools > Trends' },
         'risks': { title: 'Risk Assessment', breadcrumb: 'Tools > Risk' },
         'chat': { title: 'Medical Assistant', breadcrumb: 'Tools > Chat' },
-        'translate': { title: 'Translation', breadcrumb: 'Tools > Translate' }
+        'translate': { title: 'Translation', breadcrumb: 'Tools > Translate' },
+        'profile': { title: 'User Profile', breadcrumb: 'Account > Profile' }
     };
     
     const info = titles[sectionId] || { title: 'Dashboard', breadcrumb: 'Overview' };
@@ -113,10 +118,13 @@ function updatePageTitle(sectionId) {
 // THEME TOGGLE
 // ========================================
 function initTheme() {
-    const savedTheme = localStorage.getItem('medrag-theme');
+    const savedTheme = localStorage.getItem('medrag-theme') || 'light';
     if (savedTheme === 'dark') {
         document.body.classList.add('dark-mode');
         updateThemeBtn(true);
+    } else {
+        document.body.classList.remove('dark-mode');
+        updateThemeBtn(false);
     }
 }
 
@@ -127,10 +135,8 @@ function toggleTheme() {
 }
 
 function updateThemeBtn(isDark) {
-    // Use IDs from HTML for direct access
     const icon = document.getElementById('themeIcon');
     const text = document.getElementById('themeText');
-    
     if (icon) icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
     if (text) text.textContent = isDark ? 'Light Mode' : 'Dark Mode';
 }
@@ -233,17 +239,18 @@ async function handleFileUpload(file) {
             
             // Store results
             AppState.summaryContent = data.summary || '';
-            AppState.nlpAnalysis = data.nlp_analysis || {};
             AppState.labData = data.lab_values?.values || [];
             AppState.riskAssessment = data.risk_profile || {};
             AppState.suggestedQuestions = data.chatbot?.suggested_questions || [];
+
+            // Reload complete lab history from backend persistence
+            await loadLabTrendsData();
             
             updateProgress(100, 'complete');
             
             // Update UI
             updateSummarySection();
             updateSummaryStats(data.stats, data.summary_type);
-            updateNLPSection();
             updateLabTrendsSection();
             updateRiskSection();
             updateQuickStats();
@@ -369,55 +376,129 @@ function updateVisionResults(file, data) {
     
     if (!resultsContainer) return;
     
+    // Debug: Log the received data
+    console.log('Vision API Response:', JSON.stringify(data, null, 2));
+    
     // Hide upload section, show results
     if (uploadSection) uploadSection.style.display = 'none';
     resultsContainer.style.display = 'grid';
     
     // Create image URL
     const imageUrl = URL.createObjectURL(file);
+
+    const confidenceScore = Number(data.confidence_score ?? data.confidence ?? 0.85);
+    const triageLevel = data.urgency_level || 'Needs routine follow-up';
+    const triageReason = data.urgency_reason || 'Clinical review recommended for confirmation.';
+    const patientSummary = data.patient_summary || 'AI analysis completed. Review findings with a clinician.';
+    const triageMeta = getTriageMeta(triageLevel);
+
+    const findingsHtml = Array.isArray(data.findings) && data.findings.length > 0
+        ? `<div class="vision-findings-list">${data.findings.map((f) => {
+            const severity = (f.severity || 'NORMAL').toUpperCase();
+            const severityClass = `severity-${severity.toLowerCase()}`;
+            const location = f.location ? `<span class="finding-location">${escapeHtml(f.location)}</span>` : '';
+            const description = f.description ? `<p>${escapeHtml(f.description)}</p>` : '';
+            return `
+                <article class="finding-card ${severityClass}">
+                    <div class="finding-head">
+                        <h5>${escapeHtml(f.finding || 'Finding')}</h5>
+                        <span class="severity-pill ${severityClass}">${escapeHtml(severity)}</span>
+                    </div>
+                    ${location}
+                    ${description}
+                </article>
+            `;
+        }).join('')}</div>`
+        : '<p class="vision-empty">No significant findings detected.</p>';
+
+    const differentialHtml = Array.isArray(data.differential_diagnosis) && data.differential_diagnosis.length > 0
+        ? `<section class="vision-block"><h4>Differential Diagnosis</h4><ul>${data.differential_diagnosis.map(d => `<li>${escapeHtml(d)}</li>`).join('')}</ul></section>`
+        : '';
+
+    const normalFindingsHtml = Array.isArray(data.normal_findings) && data.normal_findings.length > 0
+        ? `<section class="vision-block"><h4>Normal Findings</h4><ul>${data.normal_findings.map(n => `<li>${escapeHtml(n)}</li>`).join('')}</ul></section>`
+        : '';
+
+    const recommendationsHtml = Array.isArray(data.recommendations) && data.recommendations.length > 0
+        ? `<section class="vision-block"><h4>Recommendations</h4><ul>${data.recommendations.map(r => `<li>${escapeHtml(r)}</li>`).join('')}</ul></section>`
+        : '';
+
+    const limitationsHtml = Array.isArray(data.limitations) && data.limitations.length > 0
+        ? `<section class="vision-block"><h4>Limitations</h4><ul>${data.limitations.map(l => `<li>${escapeHtml(l)}</li>`).join('')}</ul></section>`
+        : '';
     
     resultsContainer.innerHTML = `
         <div class="vision-image-card">
             <img src="${imageUrl}" alt="Medical Image">
             <div class="image-overlay">
-                <span class="image-type-badge">${data.image_type || 'Medical Image'}</span>
+                <span class="image-type-badge">${escapeHtml(data.image_type || 'Medical Image')}</span>
             </div>
         </div>
         <div class="vision-analysis-card">
             <div class="analysis-header">
                 <h3><i class="fas fa-microscope"></i> Analysis Results</h3>
-                <span class="confidence-badge">${Math.round((data.confidence || 0.85) * 100)}% Confidence</span>
+                <span class="confidence-badge">${Math.round(confidenceScore * 100)}% Confidence</span>
             </div>
+            <section class="vision-block patient-summary-block">
+                <h4>Patient Summary</h4>
+                <p>${escapeHtml(patientSummary)}</p>
+            </section>
+            <section class="triage-banner ${triageMeta.className}">
+                <span class="triage-label">Triage</span>
+                <div class="triage-content">
+                    <strong>${escapeHtml(triageLevel)}</strong>
+                    ${triageReason ? `<span>${escapeHtml(triageReason)}</span>` : ''}
+                </div>
+            </section>
             <div class="analysis-details">
                 <div class="detail-row">
                     <span class="detail-label">Body Region</span>
-                    <span class="detail-value">${data.body_region || 'Not specified'}</span>
+                    <span class="detail-value">${escapeHtml(data.body_part || 'Not specified')}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Modality</span>
-                    <span class="detail-value">${data.modality || 'Unknown'}</span>
+                    <span class="detail-value">${escapeHtml(data.modality || 'Unknown')}</span>
                 </div>
             </div>
-            <div class="findings-section">
+            <section class="vision-block">
                 <h4>Findings</h4>
-                <p>${data.findings || 'No significant findings detected.'}</p>
-            </div>
-            <div class="impression-section">
+                ${findingsHtml}
+            </section>
+            <section class="vision-block">
                 <h4>Clinical Impression</h4>
-                <p>${data.impression || 'Normal study.'}</p>
-            </div>
-            ${data.recommendations ? `
-            <div class="recommendations-section">
-                <h4>Recommendations</h4>
-                <ul>
-                    ${Array.isArray(data.recommendations) 
-                        ? data.recommendations.map(r => `<li>${r}</li>`).join('')
-                        : `<li>${data.recommendations}</li>`}
-                </ul>
-            </div>
-            ` : ''}
+                <p>${escapeHtml(data.impression || 'Normal study.')}</p>
+            </section>
+            ${differentialHtml}
+            ${normalFindingsHtml}
+            ${recommendationsHtml}
+            ${limitationsHtml}
+            <p class="chat-disclaimer vision-disclaimer">
+                <i class="fas fa-shield-alt"></i>
+                AI-generated educational support only. Clinical decisions require professional radiologist review.
+            </p>
         </div>
     `;
+}
+
+function escapeHtml(value) {
+    const str = String(value ?? '');
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function getTriageMeta(level) {
+    const normalized = String(level || '').toLowerCase();
+    if (normalized.includes('urgent')) {
+        return { className: 'triage-high' };
+    }
+    if (normalized.includes('prompt')) {
+        return { className: 'triage-medium' };
+    }
+    return { className: 'triage-low' };
 }
 
 // ========================================
@@ -450,242 +531,19 @@ function updateSummarySection() {
     }
 }
 
-// ========================================
-// NLP SECTION
-// ========================================
-function initNLPTabs() {
-    const tabs = document.querySelectorAll('.nlp-tab');
-    
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            const targetId = tab.dataset.tab;
-            
-            // Update active tab
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            
-            // Update active panel - HTML IDs have "Panel" suffix
-            document.querySelectorAll('.nlp-panel').forEach(panel => {
-                panel.classList.remove('active');
-            });
-            
-            const targetPanel = document.getElementById(targetId + 'Panel');
-            if (targetPanel) targetPanel.classList.add('active');
-        });
-    });
-}
 
-function updateNLPSection() {
-    const analysis = AppState.nlpAnalysis;
-    
-    // Update entities - pass the summary for categorization
-    updateEntities(analysis.entities?.summary || {});
-    
-    // Update ICD codes - access items array
-    updateICDCodes(analysis.icd10_codes?.items || []);
-    
-    // Update drug interactions - access items array
-    updateDrugInteractions(analysis.drug_interactions?.items || []);
-    
-    // Update abbreviations - access items array
-    updateAbbreviations(analysis.abbreviations?.items || []);
-    
-    // Update sentiment - pass the overall sentiment
-    updateSentiment(analysis.sentiment_analysis || {});
-    
-    // Update tab counts
-    updateTabCounts(analysis);
-}
-
-function updateEntities(entities) {
-    const container = document.getElementById('entityCategories');
-    if (!container) return;
-    
-    // Map backend entity types to display names
-    const categories = [
-        { key: 'DISEASE', name: 'Conditions', icon: 'fa-disease' },
-        { key: 'DRUG', name: 'Medications', icon: 'fa-pills' },
-        { key: 'PROCEDURE', name: 'Procedures', icon: 'fa-syringe' },
-        { key: 'SYMPTOM', name: 'Symptoms', icon: 'fa-thermometer' },
-        { key: 'LAB_TEST', name: 'Lab Tests', icon: 'fa-vial' },
-        { key: 'ANATOMY', name: 'Anatomy', icon: 'fa-lungs' }
-    ];
-    
-    let html = '<div class="entity-categories">';
-    
-    // Only show categories that have entities
-    const activeCategories = categories.filter(cat => 
-        entities[cat.key] && entities[cat.key].length > 0
-    );
-    
-    // If no entities found, show at least the first 3 categories with empty state
-    const categoriesToShow = activeCategories.length > 0 
-        ? activeCategories 
-        : categories.slice(0, 3);
-    
-    categoriesToShow.forEach(cat => {
-        const items = entities[cat.key] || [];
-        html += `
-            <div class="entity-category">
-                <div class="category-header">
-                    <i class="fas ${cat.icon}"></i>
-                    ${cat.name}
-                </div>
-                <div class="entity-list">
-                    ${items.length > 0 
-                        ? items.map(e => `<span class="entity-tag">${e}</span>`).join('')
-                        : '<span class="entity-tag" style="opacity:0.5">None found</span>'}
-                </div>
-            </div>
-        `;
-    });
-    
-    html += '</div>';
-    container.innerHTML = html;
-}
-
-function updateICDCodes(codes) {
-    const container = document.getElementById('icdList');
-    if (!container) return;
-    
-    if (codes.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state small">
-                <i class="fas fa-hashtag"></i>
-                <h3>No ICD Codes</h3>
-                <p>No ICD codes were identified in the document</p>
-            </div>
-        `;
-        return;
-    }
-    
-    let html = '<div class="icd-list">';
-    codes.forEach(code => {
-        html += `
-            <div class="icd-item">
-                <span class="icd-code">${code.code || code}</span>
-                <div class="icd-details">
-                    <div class="icd-description">${code.description || 'Description not available'}</div>
-                    <div class="icd-category">${code.category || ''}</div>
-                </div>
-            </div>
-        `;
-    });
-    html += '</div>';
-    container.innerHTML = html;
-}
-
-function updateDrugInteractions(interactions) {
-    const container = document.getElementById('drugInteractions');
-    if (!container) return;
-    
-    if (interactions.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state small">
-                <i class="fas fa-check-circle"></i>
-                <h3>No Interactions Found</h3>
-                <p>No drug interactions were detected</p>
-            </div>
-        `;
-        return;
-    }
-    
-    let html = '<div class="drug-interactions">';
-    interactions.forEach(interaction => {
-        const severity = (interaction.severity || 'MODERATE').toLowerCase();
-        const drugs = interaction.drug1 && interaction.drug2 
-            ? `${interaction.drug1} + ${interaction.drug2}` 
-            : interaction.drugs || 'Unknown drugs';
-        html += `
-            <div class="interaction-item ${severity}">
-                <div class="interaction-header">
-                    <span class="interaction-drugs">${drugs}</span>
-                    <span class="severity-badge ${severity}">${severity}</span>
-                </div>
-                <p class="interaction-desc">${interaction.description || 'Potential interaction detected'}</p>
-                ${interaction.recommendation ? `<p class="interaction-rec"><strong>Recommendation:</strong> ${interaction.recommendation}</p>` : ''}
-            </div>
-        `;
-    });
-    html += '</div>';
-    container.innerHTML = html;
-}
-
-function updateAbbreviations(abbreviations) {
-    const container = document.getElementById('abbreviationList');
-    if (!container) return;
-    
-    if (abbreviations.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state small">
-                <i class="fas fa-spell-check"></i>
-                <h3>No Abbreviations</h3>
-                <p>No medical abbreviations were found</p>
-            </div>
-        `;
-        return;
-    }
-    
-    let html = '<div class="abbreviation-list">';
-    abbreviations.forEach(abbrev => {
-        html += `
-            <div class="abbrev-item">
-                <span class="abbrev-short">${abbrev.abbreviation || abbrev.short || abbrev}</span>
-                <span class="abbrev-full">${abbrev.expansion || abbrev.full || ''}</span>
-            </div>
-        `;
-    });
-    html += '</div>';
-    container.innerHTML = html;
-}
-
-function updateSentiment(sentiment) {
-    const container = document.getElementById('sentimentOverview');
-    if (!container) return;
-    
-    // Access the overall object's label field
-    const overallObj = sentiment.overall || {};
-    const overall = (overallObj.label || 'NEUTRAL').toLowerCase();
-    const confidence = overallObj.confidence || 0.5;
-    
-    const icons = {
-        positive: 'fa-smile',
-        neutral: 'fa-meh',
-        negative: 'fa-frown'
-    };
-    
-    container.innerHTML = `
-        <div class="sentiment-overview">
-            <div class="sentiment-main">
-                <div class="sentiment-icon ${overall}">
-                    <i class="fas ${icons[overall] || icons.neutral}"></i>
-                </div>
-                <div class="sentiment-details">
-                    <h4>${overall.charAt(0).toUpperCase() + overall.slice(1)} Outlook</h4>
-                    <p>Document sentiment analysis indicates a ${overall} clinical outlook (${Math.round(confidence * 100)}% confidence).</p>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function updateTabCounts(analysis) {
-    // Update tab badges - map to HTML data-tab values
-    const entityBadge = document.getElementById('entityCount');
-    const icdBadge = document.getElementById('icdCount');
-    const drugBadge = document.getElementById('drugCount');
-    const abbrevBadge = document.getElementById('abbrevCount');
-    
-    if (entityBadge) entityBadge.textContent = analysis.entities?.total_count || 0;
-    if (icdBadge) icdBadge.textContent = analysis.icd10_codes?.total_count || 0;
-    if (drugBadge) drugBadge.textContent = analysis.drug_interactions?.total_count || 0;
-    if (abbrevBadge) abbrevBadge.textContent = analysis.abbreviations?.total_count || 0;
-}
 
 // ========================================
 // LAB TRENDS SECTION
 // ========================================
 let labChart = null;
+
+const LAB_CATEGORY_ALIASES = {
+    glucose: ['glucose', 'fbg', 'fbs', 'rbs', 'blood sugar', 'fasting glucose', 'random glucose', 'eag'],
+    hba1c: ['hba1c', 'a1c', 'glycated hemoglobin', 'glycosylated hemoglobin'],
+    bp: ['systolic bp', 'diastolic bp', 'blood pressure', 'bp'],
+    cholesterol: ['total cholesterol', 'cholesterol', 'hdl cholesterol', 'ldl cholesterol', 'triglycerides']
+};
 
 function initLabTrends() {
     // Initialize trend select
@@ -697,9 +555,106 @@ function initLabTrends() {
     }
 }
 
+async function loadLabTrendsData() {
+    try {
+        const [trendsResp, latestResp] = await Promise.all([
+            fetch('/lab-trends'),
+            fetch('/lab-trends/latest')
+        ]);
+
+        const trendsData = await trendsResp.json();
+        const latestData = await latestResp.json();
+
+        if (!trendsResp.ok || !trendsData.success) {
+            throw new Error('Failed to load lab trends');
+        }
+
+        const grouped = trendsData.trends || {};
+        const byCategory = {
+            glucose: [],
+            hba1c: [],
+            bp: [],
+            cholesterol: []
+        };
+
+        const flattened = [];
+        Object.entries(grouped).forEach(([labName, entries]) => {
+            (entries || []).forEach((entry) => {
+                const normalized = normalizeLabEntry(entry, labName);
+                const category = normalizeLabCategory(normalized.name);
+                flattened.push(normalized);
+                if (category) {
+                    byCategory[category].push(normalized);
+                }
+            });
+        });
+
+        Object.keys(byCategory).forEach((key) => {
+            byCategory[key].sort((a, b) => new Date(a.date) - new Date(b.date));
+        });
+
+        flattened.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        AppState.labData = flattened;
+        AppState.labTrendsByCategory = byCategory;
+        AppState.latestLabValues = normalizeLatestValues(latestData?.latest || {});
+
+        updateLabTrendsSection();
+        updateDashboardHealth();
+        updateQuickStats();
+    } catch (error) {
+        console.error('Lab trends load failed:', error);
+    }
+}
+
+function normalizeLabEntry(entry, fallbackName = '') {
+    return {
+        ...entry,
+        name: entry.name || fallbackName || 'Unknown Lab',
+        reference: entry.reference || entry.reference_range || 'N/A',
+        status: (entry.status || 'normal').toLowerCase()
+    };
+}
+
+function normalizeLatestValues(latest) {
+    const normalized = {
+        glucose: null,
+        hba1c: null,
+        bpSystolic: null,
+        bpDiastolic: null,
+        cholesterol: null
+    };
+
+    Object.values(latest || {}).forEach((entry) => {
+        const e = normalizeLabEntry(entry);
+        const name = (e.name || '').toLowerCase();
+        const category = normalizeLabCategory(name);
+
+        if (name.includes('systolic')) normalized.bpSystolic = e;
+        if (name.includes('diastolic')) normalized.bpDiastolic = e;
+
+        if (category === 'glucose' && !normalized.glucose) normalized.glucose = e;
+        if (category === 'hba1c' && !normalized.hba1c) normalized.hba1c = e;
+        if (category === 'cholesterol' && !normalized.cholesterol) normalized.cholesterol = e;
+    });
+
+    return normalized;
+}
+
+function normalizeLabCategory(name = '') {
+    const n = String(name).toLowerCase();
+    for (const [category, aliases] of Object.entries(LAB_CATEGORY_ALIASES)) {
+        if (aliases.some((alias) => n.includes(alias))) {
+            return category;
+        }
+    }
+    return null;
+}
+
 function updateLabTrendsSection() {
     updateLabCards();
-    updateLabChart('glucose');
+    const selectedTrend = document.getElementById('trendSelector')?.value || 'glucose';
+    updateLabChart(selectedTrend);
     updateLabHistoryTable();
 }
 
@@ -745,19 +700,63 @@ function updateLabCards() {
         }
         
         if (statusEl) {
-            const status = getValueStatus(card.id, card.getValue());
+            const status = getLatestLabStatus(card.id) || getValueStatus(card.id, card.getValue());
             statusEl.textContent = status;
             statusEl.className = `value-status ${status.toLowerCase()}`;
         }
     });
 }
 
+function getLatestLabStatus(category) {
+    const latest = AppState.latestLabValues || {};
+
+    if (category === 'glucose') return latest.glucose?.status ? capitalizeStatus(latest.glucose.status) : null;
+    if (category === 'hba1c') return latest.hba1c?.status ? capitalizeStatus(latest.hba1c.status) : null;
+    if (category === 'cholesterol') return latest.cholesterol?.status ? capitalizeStatus(latest.cholesterol.status) : null;
+    if (category === 'bp') {
+        const status = latest.bpSystolic?.status || latest.bpDiastolic?.status;
+        return status ? capitalizeStatus(status) : null;
+    }
+    return null;
+}
+
+function capitalizeStatus(status) {
+    const s = String(status || '').toLowerCase();
+    return s ? s.charAt(0).toUpperCase() + s.slice(1) : 'Normal';
+}
+
 function getLatestLabValue(labType) {
-    const lab = AppState.labData.find(l => 
-        l.name?.toLowerCase().includes(labType.toLowerCase()) ||
-        l.type?.toLowerCase().includes(labType.toLowerCase())
-    );
-    return lab?.value || null;
+    const latest = AppState.latestLabValues || {};
+
+    if (labType === 'glucose') return latest.glucose?.value ?? getLatestFromCategory('glucose')?.value ?? null;
+    if (labType === 'hba1c') return latest.hba1c?.value ?? getLatestFromCategory('hba1c')?.value ?? null;
+    if (labType === 'blood_pressure' || labType === 'bp') {
+        const sys = latest.bpSystolic?.value;
+        const dia = latest.bpDiastolic?.value;
+        if (sys != null && dia != null) return `${sys}/${dia}`;
+        return getLatestBpFromTrend();
+    }
+    if (labType === 'cholesterol') return latest.cholesterol?.value ?? getLatestFromCategory('cholesterol')?.value ?? null;
+
+    return null;
+}
+
+function getLatestFromCategory(category) {
+    const arr = AppState.labTrendsByCategory?.[category] || [];
+    return arr.length ? arr[arr.length - 1] : null;
+}
+
+function getLatestBpFromTrend() {
+    const bpEntries = AppState.labTrendsByCategory?.bp || [];
+    if (!bpEntries.length) return null;
+
+    const systolic = bpEntries.filter((x) => x.name.toLowerCase().includes('systolic')).pop();
+    const diastolic = bpEntries.filter((x) => x.name.toLowerCase().includes('diastolic')).pop();
+
+    if (systolic && diastolic) return `${systolic.value}/${diastolic.value}`;
+
+    const generic = bpEntries.pop();
+    return generic ? generic.value : null;
 }
 
 function getValueStatus(type, value) {
@@ -781,9 +780,8 @@ function getValueStatus(type, value) {
 function updateLabChart(labType) {
     const ctx = document.getElementById('trendChart');
     if (!ctx) return;
-    
-    // Sample data - in production, use actual lab data
-    const data = generateChartData(labType);
+
+    const data = generateChartDataFromTrend(labType);
     
     if (labChart) {
         labChart.destroy();
@@ -827,20 +825,35 @@ function updateLabChart(labType) {
     });
 }
 
-function generateChartData(labType) {
-    // In production, filter actual lab data by type
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-    const baseValues = {
-        glucose: [95, 102, 98, 105, 92, 88],
-        hba1c: [5.4, 5.6, 5.5, 5.8, 5.5, 5.3],
-        cholesterol: [185, 192, 188, 195, 180, 175],
-        bp: [118, 122, 120, 125, 118, 115]
-    };
-    
+function generateChartDataFromTrend(labType) {
+    const values = AppState.labTrendsByCategory?.[labType] || [];
+
+    if (!values.length) {
+        return {
+            labels: ['No data'],
+            values: [null]
+        };
+    }
+
+    if (labType === 'bp') {
+        const systolicPoints = values.filter((v) => v.name.toLowerCase().includes('systolic'));
+        const source = systolicPoints.length ? systolicPoints : values;
+        return {
+            labels: source.map((v) => formatTrendDate(v.date)),
+            values: source.map((v) => Number(v.value))
+        };
+    }
+
     return {
-        labels: months,
-        values: baseValues[labType] || baseValues.glucose
+        labels: values.map((v) => formatTrendDate(v.date)),
+        values: values.map((v) => Number(v.value))
     };
+}
+
+function formatTrendDate(dateStr) {
+    const date = new Date(dateStr);
+    if (Number.isNaN(date.getTime())) return dateStr || 'N/A';
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 function updateLabHistoryTable() {
@@ -858,14 +871,14 @@ function updateLabHistoryTable() {
     
     let html = '';
     AppState.labData.forEach(lab => {
-        const status = lab.status || 'Normal';
+        const status = (lab.status || 'normal').toLowerCase();
         html += `
             <tr>
                 <td>${lab.date || 'N/A'}</td>
                 <td>${lab.name || 'N/A'}</td>
                 <td>${lab.value || 'N/A'} ${lab.unit || ''}</td>
-                <td>${lab.reference || 'N/A'}</td>
-                <td><span class="value-status ${status.toLowerCase()}">${status}</span></td>
+                <td>${lab.reference || lab.reference_range || 'N/A'}</td>
+                <td><span class="value-status ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></td>
             </tr>
         `;
     });
@@ -1046,7 +1059,8 @@ function updateTranslationContent(text) {
     if (!container) return;
     
     if (text) {
-        container.innerHTML = `<p>${text}</p>`;
+        const rendered = renderTranslationMarkup(text);
+        container.innerHTML = rendered;
     } else {
         container.innerHTML = `
             <div class="empty-state small">
@@ -1058,6 +1072,25 @@ function updateTranslationContent(text) {
     }
 }
 
+function renderTranslationMarkup(text) {
+    const safeText = String(text || '');
+    if (window.marked && typeof window.marked.parse === 'function') {
+        try {
+            return window.marked.parse(safeText, {
+                breaks: true,
+                gfm: true
+            });
+        } catch (error) {
+            console.warn('Marked rendering failed, falling back to plain text:', error);
+        }
+    }
+
+    return safeText
+        .split(/\n{2,}/)
+        .map(block => `<p>${escapeHtml(block).replace(/\n/g, '<br>')}</p>`)
+        .join('');
+}
+
 // ========================================
 // DASHBOARD STATS
 // ========================================
@@ -1066,8 +1099,7 @@ function updateQuickStats() {
     const stats = {
         documents: AppState.summaryContent ? 1 : 0,
         labValues: AppState.labData.length,
-        chatMessages: AppState.chatHistory.length,
-        analyses: Object.keys(AppState.nlpAnalysis).length > 0 ? 1 : 0
+        chatMessages: AppState.chatHistory.length
     };
     
     // Update DOM elements
@@ -1078,7 +1110,6 @@ function updateQuickStats() {
     
     if (docCount) docCount.textContent = stats.documents;
     if (labCount) labCount.textContent = stats.labValues;
-    if (entityCount) entityCount.textContent = AppState.nlpAnalysis?.entities?.total_count || 0;
     if (chatCount) chatCount.textContent = stats.chatMessages;
 }
 
@@ -1230,7 +1261,6 @@ function updateSummaryStats(stats, summaryType) {
     if (pagesEl && stats) pagesEl.textContent = stats.pages || '--';
     if (chunksEl && stats) chunksEl.textContent = stats.chunks || '--';
     if (timeEl) timeEl.textContent = ((Date.now() % 10000) / 1000).toFixed(1); // Approximate
-    if (entitiesEl) entitiesEl.textContent = AppState.nlpAnalysis?.entities?.total_count || '--';
     if (typeBadge) typeBadge.textContent = summaryType === 'Extractive' ? 'Extractive' : 'AI Generated';
 }
 
@@ -1302,12 +1332,22 @@ function getLanguageName(code) {
 // ========================================
 // CLEAR LAB HISTORY
 // ========================================
-function clearLabHistory() {
-    AppState.labData = [];
-    updateLabTrendsSection();
-    updateDashboardHealth();
-    updateQuickStats();
-    showToast('success', 'Cleared', 'Lab history has been cleared');
+async function clearLabHistory() {
+    try {
+        const response = await fetch('/lab-trends/clear', {
+            method: 'POST'
+        });
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || 'Failed to clear lab history');
+        }
+
+        await loadLabTrendsData();
+        showToast('success', 'Cleared', 'Lab history has been cleared');
+    } catch (error) {
+        showToast('error', 'Error', error.message || 'Could not clear lab history');
+    }
 }
 
 // ========================================
@@ -1324,6 +1364,68 @@ window.translateTo = translateTo;
 window.translateSummary = translateSummary;
 window.sendMessage = sendChatMessage;
 window.clearLabHistory = clearLabHistory;
+window.logout = logout;
+
+// ========================================
+// AUTHENTICATION
+// ========================================
+async function checkAuthentication() {
+    // Don't check auth on page load - let middleware handle it
+    // This prevents infinite redirect loops
+    return;
+}
+
+function displayUserInfo(user) {
+    // Add user info to header if element exists
+    const userInfoEl = document.getElementById('userInfo');
+    if (userInfoEl) {
+        userInfoEl.innerHTML = `
+            <div class="user-menu">
+                <span class="user-name">${escapeHtml(user.full_name || user.email)}</span>
+                <button class="btn-secondary" onclick="logout()">Logout</button>
+            </div>
+        `;
+    }
+}
+
+async function logout() {
+    try {
+        await fetch('/auth/logout', { method: 'POST' });
+        window.location.href = '/login.html';
+    } catch (error) {
+        console.error('Logout failed:', error);
+        window.location.href = '/login.html';
+    }
+}
+
+// Clear chat history
+window.clearChat = function() {
+    const container = document.getElementById('chatMessages');
+    if (container) {
+        container.innerHTML = `
+            <div class="chat-message bot">
+                <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                <div class="message-bubble">👋 Hello! I'm your MedRAG AI assistant. Upload a medical document and ask me anything about it.</div>
+            </div>
+        `;
+    }
+    AppState.chatHistory = [];
+    updateQuickStats();
+    showToast('success', 'Cleared', 'Chat history has been cleared');
+};
+
+// Inline translation from summary section dropdown
+window.translateSummaryInline = function() {
+    const selector = document.getElementById('summaryLangSelect');
+    if (!selector) return;
+    const lang = selector.value;
+    if (lang === 'en') {
+        updateSummarySection();
+        return;
+    }
+    AppState.selectedLanguage = lang;
+    translateSummary();
+};
 
 // Toggle sidebar collapsed state
 window.toggleSidebar = function() {
@@ -1332,3 +1434,125 @@ window.toggleSidebar = function() {
         sidebar.classList.toggle('collapsed');
     }
 };
+// ========================================
+// PROFILE FUNCTIONS
+// ========================================
+
+async function loadUserProfile() {
+    try {
+        const response = await fetch('/auth/me', {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.success && data.user) {
+            document.getElementById('profileFullName').textContent = data.user.full_name;
+            document.getElementById('profileEmail').textContent = data.user.email;
+            
+            // Update sidebar user info
+            const userName = document.querySelector('.user-name');
+            if (userName) userName.textContent = data.user.full_name;
+            
+            // Set member since (you can enhance this with actual data from backend)
+            document.getElementById('profileMemberSince').textContent = 'Recently';
+            document.getElementById('profileLastLogin').textContent = 'Just now';
+            
+            // Get document count
+            fetchUserStats(data.user.user_id);
+        }
+    } catch (error) {
+        console.error('Failed to load profile:', error);
+    }
+}
+
+async function fetchUserStats(userId) {
+    try {
+        const docsResponse = await fetch('/documents/history?limit=1000', {
+            credentials: 'include'
+        });
+        const docsData = await docsResponse.json();
+        
+        if (docsData.success) {
+            document.getElementById('profileDocCount').textContent = docsData.documents.length;
+        }
+    } catch (error) {
+        console.error('Failed to fetch stats:', error);
+    }
+}
+
+async function handlePasswordChange(event) {
+    event.preventDefault();
+    
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const btn = document.getElementById('changePasswordBtn');
+    const errorDiv = document.getElementById('passwordError');
+    const successDiv = document.getElementById('passwordSuccess');
+    
+    // Hide messages
+    errorDiv.style.display = 'none';
+    successDiv.style.display = 'none';
+    
+    // Validate
+    if (newPassword !== confirmPassword) {
+        errorDiv.textContent = 'New passwords do not match';
+        errorDiv.style.display = 'block';
+        return;
+    }
+    
+    if (newPassword.length < 8) {
+        errorDiv.textContent = 'Password must be at least 8 characters';
+        errorDiv.style.display = 'block';
+        return;
+    }
+    
+    if (!/[A-Za-z]/.test(newPassword) || !/\d/.test(newPassword)) {
+        errorDiv.textContent = 'Password must contain letters and numbers';
+        errorDiv.style.display = 'block';
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Changing...';
+    
+    try {
+        const response = await fetch('/auth/change-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                old_password: currentPassword,
+                new_password: newPassword
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            successDiv.textContent = 'Password changed successfully! Redirecting to login...';
+            successDiv.style.display = 'block';
+            document.getElementById('changePasswordForm').reset();
+            
+            // Redirect to login after 2 seconds
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
+        } else {
+            errorDiv.textContent = data.error || 'Failed to change password';
+            errorDiv.style.display = 'block';
+        }
+    } catch (error) {
+        errorDiv.textContent = 'Network error. Please try again.';
+        errorDiv.style.display = 'block';
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-key"></i> Change Password';
+    }
+}
+
+// Make functions globally available
+window.handlePasswordChange = handlePasswordChange;
+window.loadUserProfile = loadUserProfile;

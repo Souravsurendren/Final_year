@@ -1,100 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedRAG | Medical Document Intelligence Platform</title>
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <meta name="description" content="MedRAG — Enterprise AI-powered medical document analysis, lab trends, risk assessment, and clinical intelligence platform.">
+    <title>MedRAG | Enterprise Medical Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- PDF Export -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%232563EB'/%3E%3Cpath d='M35 50h30M50 35v30' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
-
-    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="/static/css/dashboard.css?v=6">
 </head>
-
 <body>
-    <!-- Sidebar -->
+    <!-- ============================================ -->
+    <!-- SIDEBAR -->
+    <!-- ============================================ -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="logo">
                 <div class="logo-icon">
                     <i class="fas fa-heartbeat"></i>
+                    <div class="logo-pulse"></div>
                 </div>
                 <div class="logo-text">
                     <span class="logo-name">MedRAG</span>
-                    <span class="logo-version">v2.0</span>
+                    <span class="logo-version">Enterprise v3.0</span>
                 </div>
             </div>
-            <button class="sidebar-toggle" onclick="toggleSidebar()">
-                <i class="fas fa-bars"></i>
-            </button>
         </div>
-
         <nav class="sidebar-nav">
             <div class="nav-section">
                 <span class="nav-section-title">Main</span>
-                <a href="#" class="nav-item active" data-section="dashboard" onclick="showSection('dashboard')">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
+                <a href="#" class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-th-large"></i><span>Dashboard</span>
                 </a>
-                <a href="#" class="nav-item" data-section="upload" onclick="showSection('upload')">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <span>Upload</span>
+                <a href="#" class="nav-item" data-section="upload">
+                    <i class="fas fa-cloud-upload-alt"></i><span>Upload</span>
+                    <span class="nav-badge new">New</span>
                 </a>
-                <a href="#" class="nav-item" data-section="summary" onclick="showSection('summary')">
-                    <i class="fas fa-file-medical-alt"></i>
-                    <span>Summary</span>
+                <a href="#" class="nav-item" data-section="summary">
+                    <i class="fas fa-file-medical-alt"></i><span>Summary</span>
                 </a>
             </div>
-
             <div class="nav-section">
                 <span class="nav-section-title">Analysis</span>
-                <a href="#" class="nav-item" data-section="nlp" onclick="showSection('nlp')">
-                    <i class="fas fa-dna"></i>
-                    <span>Medical NLP</span>
-                    <span class="nav-badge">5</span>
+
+                <a href="#" class="nav-item" data-section="vision">
+                    <i class="fas fa-x-ray"></i><span>Image Analysis</span>
                 </a>
-                <a href="#" class="nav-item" data-section="vision" onclick="showSection('vision')">
-                    <i class="fas fa-x-ray"></i>
-                    <span>Image Analysis</span>
-                    <span class="nav-badge new">NEW</span>
+                <a href="#" class="nav-item" data-section="trends">
+                    <i class="fas fa-chart-line"></i><span>Lab Trends</span>
                 </a>
-                <a href="#" class="nav-item" data-section="trends" onclick="showSection('trends')">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Lab Trends</span>
-                </a>
-                <a href="#" class="nav-item" data-section="risks" onclick="showSection('risks')">
-                    <i class="fas fa-heart-pulse"></i>
-                    <span>Risk Scores</span>
+                <a href="#" class="nav-item" data-section="risks">
+                    <i class="fas fa-shield-heart"></i><span>Risk Scores</span>
                 </a>
             </div>
-
             <div class="nav-section">
                 <span class="nav-section-title">Tools</span>
-                <a href="#" class="nav-item" data-section="chat" onclick="showSection('chat')">
-                    <i class="fas fa-comments"></i>
-                    <span>AI Chat</span>
+                <a href="#" class="nav-item" data-section="chat">
+                    <i class="fas fa-comments"></i><span>AI Chat</span>
                 </a>
-                <a href="#" class="nav-item" data-section="translate" onclick="showSection('translate')">
-                    <i class="fas fa-language"></i>
-                    <span>Translate</span>
+                <a href="#" class="nav-item" data-section="translate">
+                    <i class="fas fa-language"></i><span>Translate</span>
+                </a>
+            </div>
+            <div class="nav-section">
+                <span class="nav-section-title">Account</span>
+                <a href="#" class="nav-item" data-section="profile">
+                    <i class="fas fa-user-circle"></i><span>Profile</span>
                 </a>
             </div>
         </nav>
-
         <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="user-avatar"><i class="fas fa-user-md"></i></div>
+                <div class="user-info">
+                    <span class="user-name">Clinician</span>
+                    <span class="user-role">Medical Analysis</span>
+                </div>
+            </div>
             <button class="theme-btn" onclick="toggleTheme()">
                 <i class="fas fa-moon" id="themeIcon"></i>
                 <span id="themeText">Dark Mode</span>
@@ -102,317 +87,281 @@
         </div>
     </aside>
 
-    <!-- Main Content -->
+    <!-- ============================================ -->
+    <!-- MAIN CONTENT -->
+    <!-- ============================================ -->
     <main class="main-content">
-        <!-- Top Bar -->
         <header class="top-bar">
-            <div class="page-title">
-                <h1 id="pageTitle">Dashboard</h1>
-                <span class="breadcrumb" id="breadcrumb">Overview</span>
+            <div class="top-bar-left">
+                <button class="sidebar-toggle-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="page-title">
+                    <h1 id="pageTitle">Dashboard</h1>
+                    <span class="breadcrumb" id="pageBreadcrumb">Overview</span>
+                </div>
             </div>
-            <div class="top-actions">
+            <div class="top-bar-right">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Search..." id="globalSearch">
+                    <input type="text" placeholder="Search documents..." id="globalSearch">
                 </div>
-                <button class="action-btn notification">
-                    <i class="fas fa-bell"></i>
-                    <span class="notification-dot"></span>
-                </button>
-                <div class="user-avatar">
-                    <i class="fas fa-user"></i>
+                <div class="top-actions">
+                    <button class="action-btn" title="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+                    <button class="action-btn" title="Settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
                 </div>
             </div>
         </header>
 
-        <!-- Dashboard Section -->
+        <!-- ======================================== -->
+        <!-- DASHBOARD SECTION -->
+        <!-- ======================================== -->
         <section class="content-section active" id="dashboardSection">
-            <!-- Quick Stats -->
+            <!-- Quick Stats Row -->
             <div class="quick-stats">
-                <div class="stat-card blue">
-                    <div class="stat-icon">
-                        <i class="fas fa-file-medical"></i>
-                    </div>
+                <div class="stat-card gradient-blue">
+                    <div class="stat-icon"><i class="fas fa-file-medical"></i></div>
                     <div class="stat-content">
                         <span class="stat-value" id="totalDocuments">0</span>
-                        <span class="stat-label">Documents Analyzed</span>
+                        <span class="stat-label">Documents</span>
                     </div>
-                    <div class="stat-trend up">
-                        <i class="fas fa-arrow-up"></i> 12%
+                    <div class="stat-sparkline">
+                        <svg viewBox="0 0 80 30"><polyline points="0,25 15,20 30,22 45,15 60,18 75,10" fill="none" stroke="currentColor" stroke-width="2"/></svg>
                     </div>
                 </div>
-                <div class="stat-card teal">
-                    <div class="stat-icon">
-                        <i class="fas fa-tags"></i>
-                    </div>
+                <div class="stat-card gradient-teal">
+                    <div class="stat-icon"><i class="fas fa-tags"></i></div>
                     <div class="stat-content">
                         <span class="stat-value" id="totalEntities">0</span>
-                        <span class="stat-label">Entities Extracted</span>
+                        <span class="stat-label">Entities</span>
                     </div>
-                    <div class="stat-trend up">
-                        <i class="fas fa-arrow-up"></i> 8%
+                    <div class="stat-sparkline">
+                        <svg viewBox="0 0 80 30"><polyline points="0,20 15,15 30,25 45,10 60,12 75,8" fill="none" stroke="currentColor" stroke-width="2"/></svg>
                     </div>
                 </div>
-                <div class="stat-card green">
-                    <div class="stat-icon">
-                        <i class="fas fa-flask"></i>
-                    </div>
+                <div class="stat-card gradient-green">
+                    <div class="stat-icon"><i class="fas fa-flask"></i></div>
                     <div class="stat-content">
                         <span class="stat-value" id="totalLabValues">0</span>
-                        <span class="stat-label">Lab Values Tracked</span>
+                        <span class="stat-label">Lab Values</span>
                     </div>
-                    <div class="stat-trend up">
-                        <i class="fas fa-arrow-up"></i> 15%
+                    <div class="stat-sparkline">
+                        <svg viewBox="0 0 80 30"><polyline points="0,22 15,18 30,20 45,12 60,15 75,5" fill="none" stroke="currentColor" stroke-width="2"/></svg>
                     </div>
                 </div>
-                <div class="stat-card orange">
-                    <div class="stat-icon">
-                        <i class="fas fa-robot"></i>
-                    </div>
+                <div class="stat-card gradient-purple">
+                    <div class="stat-icon"><i class="fas fa-robot"></i></div>
                     <div class="stat-content">
                         <span class="stat-value" id="totalChats">0</span>
-                        <span class="stat-label">Chat Sessions</span>
+                        <span class="stat-label">AI Chats</span>
                     </div>
-                    <div class="stat-trend up">
-                        <i class="fas fa-arrow-up"></i> 20%
+                    <div class="stat-sparkline">
+                        <svg viewBox="0 0 80 30"><polyline points="0,28 15,22 30,18 45,20 60,10 75,12" fill="none" stroke="currentColor" stroke-width="2"/></svg>
                     </div>
                 </div>
             </div>
 
             <!-- Dashboard Grid -->
             <div class="dashboard-grid">
-                <!-- Recent Activity -->
-                <div class="card activity-card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-clock"></i> Recent Activity</h3>
-                        <button class="btn-link">View All</button>
-                    </div>
-                    <div class="activity-list" id="activityList">
-                        <div class="activity-item">
-                            <div class="activity-icon blue">
-                                <i class="fas fa-file-upload"></i>
-                            </div>
-                            <div class="activity-content">
-                                <span class="activity-text">Upload a medical document to get started</span>
-                                <span class="activity-time">Just now</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Health Overview (Apple Health Style) -->
-                <div class="card health-card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-heartbeat"></i> Health Overview</h3>
-                        <span class="period-badge">Last 30 days</span>
-                    </div>
-                    <div class="health-metrics" id="healthMetrics">
-                        <div class="metric-ring">
-                            <svg viewBox="0 0 36 36" class="circular-chart">
-                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                                <path class="circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" id="healthRing"/>
-                            </svg>
-                            <div class="metric-value">
-                                <span>--</span>
-                                <small>Score</small>
+                <!-- Welcome / Health Overview -->
+                <div class="card dashboard-welcome">
+                    <div class="welcome-gradient"></div>
+                    <div class="welcome-content">
+                        <div class="welcome-text">
+                            <h2>Welcome to MedRAG <span class="wave">👋</span></h2>
+                            <p>Your AI-powered medical document intelligence platform. Upload a clinical report to unlock comprehensive analysis.</p>
+                            <div class="welcome-actions">
+                                <button class="btn-primary" onclick="navigateTo('upload')">
+                                    <i class="fas fa-upload"></i> Upload Document
+                                </button>
+                                <button class="btn-ghost" onclick="navigateTo('vision')">
+                                    <i class="fas fa-x-ray"></i> Analyze Image
+                                </button>
                             </div>
                         </div>
-                        <div class="metric-details">
-                            <div class="metric-item">
-                                <span class="metric-label">Blood Glucose</span>
-                                <span class="metric-val" id="dashGlucose">--</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-label">HbA1c</span>
-                                <span class="metric-val" id="dashHba1c">--</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-label">Blood Pressure</span>
-                                <span class="metric-val" id="dashBP">--</span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-label">Cholesterol</span>
-                                <span class="metric-val" id="dashChol">--</span>
+                        <div class="welcome-illustration">
+                            <div class="health-ring-container">
+                                <svg class="circular-chart" viewBox="0 0 36 36">
+                                    <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                    <path class="circle" id="healthRing" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                                </svg>
+                                <div class="ring-label">
+                                    <span class="ring-value" id="healthScore">--</span>
+                                    <span class="ring-text">Health</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Quick Actions -->
-                <div class="card actions-card">
+                <div class="card quick-actions-card">
                     <div class="card-header">
                         <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
                     </div>
                     <div class="quick-actions-grid">
-                        <button class="quick-action" onclick="showSection('upload')">
-                            <i class="fas fa-upload"></i>
+                        <button class="quick-action" onclick="navigateTo('upload')">
+                            <div class="qa-icon blue"><i class="fas fa-file-upload"></i></div>
                             <span>Upload PDF</span>
                         </button>
-                        <button class="quick-action" onclick="showSection('vision')">
-                            <i class="fas fa-x-ray"></i>
-                            <span>Analyze Image</span>
+                        <button class="quick-action" onclick="navigateTo('vision')">
+                            <div class="qa-icon teal"><i class="fas fa-x-ray"></i></div>
+                            <span>Scan Image</span>
                         </button>
-                        <button class="quick-action" onclick="showSection('chat')">
-                            <i class="fas fa-comment-medical"></i>
+                        <button class="quick-action" onclick="navigateTo('chat')">
+                            <div class="qa-icon purple"><i class="fas fa-comment-medical"></i></div>
                             <span>Ask AI</span>
                         </button>
-                        <button class="quick-action" onclick="showSection('trends')">
-                            <i class="fas fa-chart-area"></i>
-                            <span>View Trends</span>
+                        <button class="quick-action" onclick="navigateTo('trends')">
+                            <div class="qa-icon green"><i class="fas fa-chart-line"></i></div>
+                            <span>Lab Trends</span>
                         </button>
+                    </div>
+                </div>
+
+                <!-- Features Overview -->
+                <div class="card features-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-cubes"></i> Platform Features</h3>
+                    </div>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <div class="feature-icon green"><i class="fas fa-check-circle"></i></div>
+                            <div class="feature-info">
+                                <span class="feature-name">PDF Analysis</span>
+                                <span class="feature-desc">AI-powered document summarization</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon green"><i class="fas fa-check-circle"></i></div>
+                            <div class="feature-info">
+                                <span class="feature-name">Medical Imaging</span>
+                                <span class="feature-desc">X-ray, CT, MRI analysis</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon green"><i class="fas fa-check-circle"></i></div>
+                            <div class="feature-info">
+                                <span class="feature-name">Risk Assessment</span>
+                                <span class="feature-desc">Framingham & metabolic scoring</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon green"><i class="fas fa-check-circle"></i></div>
+                            <div class="feature-info">
+                                <span class="feature-name">Multi-Language</span>
+                                <span class="feature-desc">8 languages supported</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Upload Section -->
+        <!-- ======================================== -->
+        <!-- UPLOAD SECTION -->
+        <!-- ======================================== -->
         <section class="content-section" id="uploadSection">
             <div class="upload-container">
-                <div class="upload-header">
-                    <h2>Upload Medical Document</h2>
-                    <p>Upload a PDF document for AI-powered analysis</p>
-                </div>
-
-                <!-- Summary Type Selection -->
+                <!-- Summary Type Toggle -->
                 <div class="summary-type-toggle">
-                    <label class="type-option active">
-                        <input type="radio" name="summaryType" value="abstractive" checked>
+                    <label class="type-option">
+                        <input type="radio" name="summaryType" value="extractive" checked>
                         <div class="type-content">
-                            <i class="fas fa-wand-magic-sparkles"></i>
-                            <span class="type-name">AI Summary</span>
-                            <span class="type-desc">Comprehensive AI-generated summary</span>
+                            <div class="type-icon"><i class="fas fa-highlighter"></i></div>
+                            <span class="type-name">Extractive</span>
+                            <span class="type-desc">Key sentences extracted directly from the document</span>
                         </div>
                     </label>
                     <label class="type-option">
-                        <input type="radio" name="summaryType" value="extractive">
+                        <input type="radio" name="summaryType" value="abstractive">
                         <div class="type-content">
-                            <i class="fas fa-highlighter"></i>
-                            <span class="type-name">Extractive</span>
-                            <span class="type-desc">Key sentences from document</span>
+                            <div class="type-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
+                            <span class="type-name">AI Abstractive</span>
+                            <span class="type-desc">AI-generated comprehensive summary with insights</span>
                         </div>
                     </label>
                 </div>
 
                 <!-- Drop Zone -->
-                <div class="drop-zone" id="dropZone">
-                    <div class="drop-icon">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                    </div>
-                    <h3>Drag & drop your PDF here</h3>
-                    <p>or <span class="browse-link" onclick="document.getElementById('fileInput').click()">browse files</span></p>
-                    <div class="file-info">
-                        <span><i class="fas fa-file-pdf"></i> PDF files</span>
-                        <span><i class="fas fa-database"></i> Max 50MB</span>
-                    </div>
-                    <input type="file" id="fileInput" accept=".pdf" hidden>
-                </div>
-
-                <!-- Progress -->
-                <div class="upload-progress" id="uploadProgress" style="display: none;">
-                    <div class="progress-header">
-                        <span class="file-name" id="uploadFileName">document.pdf</span>
-                        <span class="progress-percent" id="progressPercent">0%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-                    <div class="progress-steps">
-                        <div class="step active" id="step1">
-                            <div class="step-icon"><i class="fas fa-upload"></i></div>
-                            <span>Upload</span>
+                <div class="card upload-card">
+                    <div class="drop-zone" id="dropZone">
+                        <div class="drop-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <div class="drop-icon-ring"></div>
                         </div>
-                        <div class="step" id="step2">
-                            <div class="step-icon"><i class="fas fa-file-alt"></i></div>
-                            <span>Extract</span>
+                        <h3>Drag & drop PDF file here</h3>
+                        <p>or click to browse &middot; Max 20MB</p>
+                        <div class="drop-formats">
+                            <span class="format-badge"><i class="fas fa-file-pdf"></i> PDF</span>
                         </div>
-                        <div class="step" id="step3">
-                            <div class="step-icon"><i class="fas fa-brain"></i></div>
-                            <span>Analyze</span>
-                        </div>
-                        <div class="step" id="step4">
-                            <div class="step-icon"><i class="fas fa-check"></i></div>
-                            <span>Complete</span>
+                        <input type="file" id="fileInput" accept=".pdf" hidden>
+                    </div>
+                    <div id="uploadProgress" style="display:none; padding: 32px;">
+                        <div class="progress-bar"><div class="progress-fill"></div></div>
+                        <div class="progress-percent" style="text-align: center; margin: 12px 0; font-weight: 600;">0%</div>
+                        <div class="progress-steps">
+                            <div class="step"><div class="step-dot"></div><span>Upload</span></div>
+                            <div class="step"><div class="step-dot"></div><span>Parse</span></div>
+                            <div class="step"><div class="step-dot"></div><span>Analyze</span></div>
+                            <div class="step"><div class="step-dot"></div><span>Complete</span></div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Image Upload -->
-                <div class="divider">
-                    <span>OR</span>
-                </div>
-
-                <div class="image-upload-box" id="imageDropZone">
-                    <div class="image-upload-content">
-                        <div class="image-icon">
-                            <i class="fas fa-x-ray"></i>
-                        </div>
-                        <h4>Medical Image Analysis</h4>
-                        <p>X-Ray • CT Scan • MRI • Ultrasound</p>
-                        <span class="new-tag">NEW</span>
-                    </div>
-                    <input type="file" id="imageFileInput" accept=".jpg,.jpeg,.png,.bmp,.tiff" hidden>
                 </div>
             </div>
         </section>
 
-        <!-- Summary Section -->
+        <!-- ======================================== -->
+        <!-- SUMMARY SECTION -->
+        <!-- ======================================== -->
         <section class="content-section" id="summarySection">
             <div class="summary-container">
-                <!-- Summary Header -->
                 <div class="summary-header-bar">
                     <div class="summary-title">
-                        <h2><i class="fas fa-file-medical-alt"></i> Medical Summary</h2>
-                        <span class="summary-badge" id="summaryTypeBadge">AI Generated</span>
+                        <h2><i class="fas fa-file-medical-alt"></i> Document Summary</h2>
                     </div>
                     <div class="summary-actions">
-                        <select id="languageSelect" class="language-select" onchange="translateSummary()">
-                            <option value="en">🇺🇸 English</option>
+                        <select class="lang-select" id="summaryLangSelect" onchange="translateSummaryInline()">
+                            <option value="en">🇬🇧 English</option>
                             <option value="hi">🇮🇳 Hindi</option>
                             <option value="ta">🇮🇳 Tamil</option>
                             <option value="te">🇮🇳 Telugu</option>
-                            <option value="kn">🇮🇳 Kannada</option>
-                            <option value="ml">🇮🇳 Malayalam</option>
                             <option value="es">🇪🇸 Spanish</option>
-                            <option value="fr">🇫🇷 French</option>
-                            <option value="de">🇩🇪 German</option>
                         </select>
-                        <button class="btn-secondary" onclick="copySummary()">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                        <button class="btn-secondary" onclick="exportPDF()">
-                            <i class="fas fa-download"></i> Export
-                        </button>
+                        <button class="btn-icon" onclick="copySummary()" title="Copy Summary"><i class="fas fa-copy"></i></button>
+                        <button class="btn-icon" onclick="exportPDF()" title="Export PDF"><i class="fas fa-download"></i></button>
                     </div>
                 </div>
-
-                <!-- Stats Cards -->
                 <div class="summary-stats">
-                    <div class="mini-stat">
-                        <span class="mini-stat-value" id="statPages">--</span>
-                        <span class="mini-stat-label">Pages</span>
+                    <div class="summary-stat">
+                        <i class="fas fa-file"></i>
+                        <span>Pages: <strong id="statPages">--</strong></span>
                     </div>
-                    <div class="mini-stat">
-                        <span class="mini-stat-value" id="statChunks">--</span>
-                        <span class="mini-stat-label">Chunks</span>
+                    <div class="summary-stat">
+                        <i class="fas fa-puzzle-piece"></i>
+                        <span>Chunks: <strong id="statChunks">--</strong></span>
                     </div>
-                    <div class="mini-stat">
-                        <span class="mini-stat-value" id="statTime">--</span>
-                        <span class="mini-stat-label">Seconds</span>
+                    <div class="summary-stat">
+                        <i class="fas fa-clock"></i>
+                        <span>Time: <strong id="statTime">--</strong>s</span>
                     </div>
-                    <div class="mini-stat">
-                        <span class="mini-stat-value" id="statEntities">--</span>
-                        <span class="mini-stat-label">Entities</span>
+                    <div class="summary-stat">
+                        <i class="fas fa-tag"></i>
+                        <span>Type: <strong id="summaryTypeBadge">--</strong></span>
                     </div>
                 </div>
-
-                <!-- Summary Content -->
-                <div class="summary-content-card">
+                <div class="card summary-card">
                     <div class="summary-text" id="summaryContent">
                         <div class="empty-state">
-                            <i class="fas fa-file-medical"></i>
-                            <h3>No Summary Yet</h3>
-                            <p>Upload a medical document to generate a summary</p>
-                            <button class="btn-primary" onclick="showSection('upload')">
+                            <div class="empty-icon"><i class="fas fa-file-medical"></i></div>
+                            <h3>No Summary Available</h3>
+                            <p>Upload a medical document to generate a comprehensive AI summary</p>
+                            <button class="btn-primary" onclick="navigateTo('upload')">
                                 <i class="fas fa-upload"></i> Upload Document
                             </button>
                         </div>
@@ -421,216 +370,86 @@
             </div>
         </section>
 
-        <!-- NLP Section -->
-        <section class="content-section" id="nlpSection">
-            <div class="nlp-container">
-                <!-- NLP Tabs -->
-                <div class="nlp-tabs">
-                    <button class="nlp-tab active" data-tab="entities">
-                        <i class="fas fa-tags"></i>
-                        <span>Entities</span>
-                        <span class="tab-count" id="entityCount">0</span>
-                    </button>
-                    <button class="nlp-tab" data-tab="icd10">
-                        <i class="fas fa-hashtag"></i>
-                        <span>ICD-10</span>
-                        <span class="tab-count" id="icdCount">0</span>
-                    </button>
-                    <button class="nlp-tab" data-tab="drugs">
-                        <i class="fas fa-pills"></i>
-                        <span>Drug Interactions</span>
-                        <span class="tab-count warning" id="drugCount">0</span>
-                    </button>
-                    <button class="nlp-tab" data-tab="abbrev">
-                        <i class="fas fa-spell-check"></i>
-                        <span>Abbreviations</span>
-                        <span class="tab-count" id="abbrevCount">0</span>
-                    </button>
-                    <button class="nlp-tab" data-tab="sentiment">
-                        <i class="fas fa-face-smile"></i>
-                        <span>Sentiment</span>
-                    </button>
-                </div>
 
-                <!-- NLP Content -->
-                <div class="nlp-content">
-                    <!-- Entities Panel -->
-                    <div class="nlp-panel active" id="entitiesPanel">
-                        <div class="entity-categories" id="entityCategories">
-                            <div class="empty-state small">
-                                <i class="fas fa-tags"></i>
-                                <p>No entities extracted yet</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ICD-10 Panel -->
-                    <div class="nlp-panel" id="icd10Panel">
-                        <div class="icd-list" id="icdList">
-                            <div class="empty-state small">
-                                <i class="fas fa-hashtag"></i>
-                                <p>No ICD-10 codes mapped yet</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Drug Interactions Panel -->
-                    <div class="nlp-panel" id="drugsPanel">
-                        <div class="drug-interactions" id="drugInteractions">
-                            <div class="empty-state small">
-                                <i class="fas fa-pills"></i>
-                                <p>No drug interactions detected</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Abbreviations Panel -->
-                    <div class="nlp-panel" id="abbrevPanel">
-                        <div class="abbreviation-list" id="abbreviationList">
-                            <div class="empty-state small">
-                                <i class="fas fa-spell-check"></i>
-                                <p>No abbreviations found</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Sentiment Panel -->
-                    <div class="nlp-panel" id="sentimentPanel">
-                        <div class="sentiment-overview" id="sentimentOverview">
-                            <div class="empty-state small">
-                                <i class="fas fa-face-smile"></i>
-                                <p>No sentiment analysis available</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Vision Section -->
+        <!-- ======================================== -->
+        <!-- VISION SECTION -->
+        <!-- ======================================== -->
         <section class="content-section" id="visionSection">
             <div class="vision-container">
-                <div class="vision-upload" id="visionUpload">
-                    <div class="vision-drop-zone" id="visionDropZone">
-                        <i class="fas fa-microscope"></i>
-                        <h3>Upload Medical Image</h3>
-                        <p>X-Ray • CT Scan • MRI • Ultrasound • Pathology</p>
-                        <button class="btn-primary" onclick="document.getElementById('visionFileInput').click()">
-                            <i class="fas fa-upload"></i> Select Image
-                        </button>
-                        <input type="file" id="visionFileInput" accept=".jpg,.jpeg,.png,.bmp,.tiff" hidden>
+                <div class="card" id="visionUpload">
+                    <div class="card-header">
+                        <h3><i class="fas fa-x-ray"></i> Medical Image Analysis</h3>
+                        <span class="header-badge">AI Vision</span>
                     </div>
-                </div>
-
-                <div class="vision-results" id="visionResults" style="display: none;">
-                    <div class="vision-image-card">
-                        <img id="visionImage" src="" alt="Medical Image">
-                        <div class="image-overlay">
-                            <span class="image-type-badge" id="visionImageType">X-RAY</span>
-                        </div>
-                    </div>
-                    <div class="vision-analysis-card">
-                        <div class="analysis-header">
-                            <h3><i class="fas fa-stethoscope"></i> Analysis Results</h3>
-                            <span class="confidence-badge" id="visionConfidence">HIGH</span>
-                        </div>
-                        <div class="analysis-details">
-                            <div class="detail-row">
-                                <span class="detail-label">Image Type</span>
-                                <span class="detail-value" id="visionType">--</span>
+                    <div style="padding: 32px;">
+                        <div class="drop-zone" id="visionDropZone">
+                            <div class="drop-icon">
+                                <i class="fas fa-microscope"></i>
+                                <div class="drop-icon-ring"></div>
                             </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Body Region</span>
-                                <span class="detail-value" id="visionBody">--</span>
+                            <h3>Upload medical image</h3>
+                            <p>X-ray, CT, MRI, Pathology &middot; PNG or JPEG</p>
+                            <div class="drop-formats">
+                                <span class="format-badge"><i class="fas fa-image"></i> PNG</span>
+                                <span class="format-badge"><i class="fas fa-image"></i> JPEG</span>
                             </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Modality</span>
-                                <span class="detail-value" id="visionModality">--</span>
-                            </div>
-                        </div>
-                        <div class="findings-section">
-                            <h4>Findings</h4>
-                            <div id="visionFindings"></div>
-                        </div>
-                        <div class="impression-section">
-                            <h4>Impression</h4>
-                            <p id="visionImpression">--</p>
-                        </div>
-                        <div class="recommendations-section">
-                            <h4>Recommendations</h4>
-                            <ul id="visionRecommendations"></ul>
+                            <input type="file" id="visionFileInput" accept="image/*" hidden>
                         </div>
                     </div>
                 </div>
+                <div id="visionResults" style="display:none"></div>
             </div>
         </section>
 
-        <!-- Lab Trends Section (Apple Health Style) -->
+        <!-- ======================================== -->
+        <!-- LAB TRENDS SECTION -->
+        <!-- ======================================== -->
         <section class="content-section" id="trendsSection">
             <div class="trends-container">
-                <!-- Latest Values Grid -->
-                <div class="lab-values-grid" id="labValuesGrid">
+                <div class="lab-values-grid">
                     <div class="lab-value-card glucose">
-                        <div class="value-header">
-                            <i class="fas fa-tint"></i>
-                            <span>Blood Glucose</span>
+                        <div class="lvc-header"><i class="fas fa-droplet"></i> Glucose</div>
+                        <div class="lvc-main">
+                            <span class="lvc-number" id="glucoseValue">--</span>
+                            <span class="lvc-unit">mg/dL</span>
                         </div>
-                        <div class="value-main">
-                            <span class="value-number" id="glucoseValue">--</span>
-                            <span class="value-unit">mg/dL</span>
-                        </div>
-                        <div class="value-status normal" id="glucoseStatus">Normal</div>
-                        <div class="value-reference">Ref: 70-100 mg/dL</div>
+                        <span class="lvc-status normal" id="glucoseStatus">Normal</span>
+                        <div class="lvc-ref">Normal: 70–100 mg/dL</div>
                     </div>
-
                     <div class="lab-value-card hba1c">
-                        <div class="value-header">
-                            <i class="fas fa-percentage"></i>
-                            <span>HbA1c</span>
+                        <div class="lvc-header"><i class="fas fa-chart-line"></i> HbA1c</div>
+                        <div class="lvc-main">
+                            <span class="lvc-number" id="hba1cValue">--</span>
+                            <span class="lvc-unit">%</span>
                         </div>
-                        <div class="value-main">
-                            <span class="value-number" id="hba1cValue">--</span>
-                            <span class="value-unit">%</span>
-                        </div>
-                        <div class="value-status normal" id="hba1cStatus">Normal</div>
-                        <div class="value-reference">Ref: 4.0-5.6%</div>
+                        <span class="lvc-status normal" id="hba1cStatus">Normal</span>
+                        <div class="lvc-ref">Normal: &lt; 5.7%</div>
                     </div>
-
                     <div class="lab-value-card bp">
-                        <div class="value-header">
-                            <i class="fas fa-heart-pulse"></i>
-                            <span>Blood Pressure</span>
+                        <div class="lvc-header"><i class="fas fa-heart-pulse"></i> Blood Pressure</div>
+                        <div class="lvc-main">
+                            <span class="lvc-number" id="bpValue">--</span>
+                            <span class="lvc-unit">mmHg</span>
                         </div>
-                        <div class="value-main">
-                            <span class="value-number" id="bpValue">--/--</span>
-                            <span class="value-unit">mmHg</span>
-                        </div>
-                        <div class="value-status normal" id="bpStatus">Normal</div>
-                        <div class="value-reference">Ref: &lt;120/80 mmHg</div>
+                        <span class="lvc-status normal" id="bpStatus">Normal</span>
+                        <div class="lvc-ref">Normal: &lt; 120/80</div>
                     </div>
-
                     <div class="lab-value-card cholesterol">
-                        <div class="value-header">
-                            <i class="fas fa-droplet"></i>
-                            <span>Cholesterol</span>
+                        <div class="lvc-header"><i class="fas fa-vial"></i> Cholesterol</div>
+                        <div class="lvc-main">
+                            <span class="lvc-number" id="cholesterolValue">--</span>
+                            <span class="lvc-unit">mg/dL</span>
                         </div>
-                        <div class="value-main">
-                            <span class="value-number" id="cholValue">--</span>
-                            <span class="value-unit">mg/dL</span>
-                        </div>
-                        <div class="value-status normal" id="cholStatus">Normal</div>
-                        <div class="value-reference">Ref: &lt;200 mg/dL</div>
+                        <span class="lvc-status normal" id="cholesterolStatus">Normal</span>
+                        <div class="lvc-ref">Normal: &lt; 200 mg/dL</div>
                     </div>
                 </div>
-
-                <!-- Trend Chart -->
-                <div class="trend-chart-card">
-                    <div class="chart-header">
+                <div class="card trend-chart-card">
+                    <div class="card-header">
                         <h3><i class="fas fa-chart-area"></i> Trend Analysis</h3>
                         <select id="trendSelector" class="trend-select">
-                            <option value="glucose">Blood Glucose</option>
+                            <option value="glucose">Glucose</option>
                             <option value="hba1c">HbA1c</option>
-                            <option value="bp">Blood Pressure</option>
                             <option value="cholesterol">Cholesterol</option>
                         </select>
                     </div>
@@ -638,30 +457,19 @@
                         <canvas id="trendChart"></canvas>
                     </div>
                 </div>
-
-                <!-- History Table -->
-                <div class="history-table-card">
-                    <div class="table-header">
-                        <h3><i class="fas fa-history"></i> Measurement History</h3>
-                        <button class="btn-secondary small" onclick="clearLabHistory()">
-                            <i class="fas fa-trash"></i> Clear
-                        </button>
+                <div class="card history-table-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-history"></i> Lab History</h3>
                     </div>
                     <div class="table-wrapper">
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Test</th>
-                                    <th>Value</th>
-                                    <th>Reference</th>
-                                    <th>Status</th>
+                                    <th>Date</th><th>Test</th><th>Value</th><th>Reference</th><th>Status</th>
                                 </tr>
                             </thead>
                             <tbody id="labHistoryBody">
-                                <tr class="empty-row">
-                                    <td colspan="5">No measurements recorded</td>
-                                </tr>
+                                <tr class="empty-row"><td colspan="5">No lab history available. Upload a medical report to begin tracking.</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -669,216 +477,255 @@
             </div>
         </section>
 
-        <!-- Risk Section -->
+        <!-- ======================================== -->
+        <!-- RISK SECTION -->
+        <!-- ======================================== -->
         <section class="content-section" id="risksSection">
             <div class="risks-container">
                 <div class="risk-cards">
-                    <!-- Framingham Risk -->
-                    <div class="risk-card framingham">
+                    <div class="card risk-card framingham">
+                        <div class="risk-card-glow"></div>
                         <div class="risk-header">
-                            <div class="risk-icon">
-                                <i class="fas fa-heart"></i>
-                            </div>
+                            <div class="risk-icon-wrap"><i class="fas fa-heart"></i></div>
                             <div class="risk-title">
-                                <h3>Framingham Risk Score</h3>
-                                <span class="risk-subtitle">10-Year Cardiovascular Risk</span>
-                            </div>
-                            <span class="risk-badge low" id="framinghamBadge">Low Risk</span>
-                        </div>
-                        <div class="risk-gauge">
-                            <div class="gauge-bar">
-                                <div class="gauge-fill" id="framinghamGauge" style="width: 0%"></div>
-                            </div>
-                            <div class="gauge-labels">
-                                <span>0%</span>
-                                <span>50%</span>
-                                <span>100%</span>
+                                <h3>Framingham Risk</h3>
+                                <div class="risk-subtitle">10-year CVD risk - ESTIMATE ONLY</div>
                             </div>
                         </div>
                         <div class="risk-score">
-                            <span class="score-value" id="framinghamScore">--%</span>
-                            <span class="score-label">Estimated Risk</span>
+                            <div class="score-value" id="framinghamScore">N/A</div>
+                            <span class="score-label">Risk Percentage</span>
                         </div>
-                        <div class="risk-factors" id="framinghamFactors">
-                            <p class="no-data">Calculate risk by uploading a medical document with lab values</p>
-                        </div>
-                    </div>
-
-                    <!-- Metabolic Syndrome -->
-                    <div class="risk-card metabolic">
-                        <div class="risk-header">
-                            <div class="risk-icon">
-                                <i class="fas fa-weight-scale"></i>
+                        <div class="risk-gauge">
+                            <div class="gauge-track">
+                                <div class="gauge-fill" id="framinghamGauge" style="width: 0%"></div>
                             </div>
+                            <div class="gauge-labels">
+                                <span>Low</span><span>Moderate</span><span>High</span>
+                            </div>
+                        </div>
+                        <p class="chat-disclaimer" style="margin-top: 12px; font-size: 11px;">
+                            <i class="fas fa-info-circle"></i>
+                            Educational estimate only. Not a validated clinical calculator.
+                        </p>
+                    </div>
+                    <div class="card risk-card metabolic">
+                        <div class="risk-card-glow"></div>
+                        <div class="risk-header">
+                            <div class="risk-icon-wrap metabolic-icon"><i class="fas fa-heartbeat"></i></div>
                             <div class="risk-title">
                                 <h3>Metabolic Syndrome</h3>
-                                <span class="risk-subtitle">Criteria Assessment</span>
+                                <div class="risk-subtitle">Criteria met - ESTIMATE ONLY</div>
                             </div>
-                            <span class="risk-badge normal" id="metabolicBadge">Not Detected</span>
                         </div>
                         <div class="criteria-score">
-                            <span class="score-fraction" id="metabolicScore">0/5</span>
-                            <span class="score-label">Criteria Met</span>
+                            <div class="score-fraction" id="metabolicScore">0/5</div>
+                            <span class="score-label">Criteria</span>
                         </div>
-                        <div class="criteria-list" id="metabolicCriteria">
-                            <div class="criteria-item">
-                                <i class="fas fa-circle"></i>
-                                <span>Elevated Blood Glucose</span>
-                            </div>
-                            <div class="criteria-item">
-                                <i class="fas fa-circle"></i>
-                                <span>Low HDL Cholesterol</span>
-                            </div>
-                            <div class="criteria-item">
-                                <i class="fas fa-circle"></i>
-                                <span>High Triglycerides</span>
-                            </div>
-                            <div class="criteria-item">
-                                <i class="fas fa-circle"></i>
-                                <span>Elevated Blood Pressure</span>
-                            </div>
-                            <div class="criteria-item">
-                                <i class="fas fa-circle"></i>
-                                <span>Large Waist Circumference</span>
-                            </div>
-                        </div>
+                        <p class="chat-disclaimer" style="margin-top: 12px; font-size: 11px;">
+                            <i class="fas fa-info-circle"></i>
+                            Educational estimate only. Not a validated clinical calculator.
+                        </p>
                     </div>
                 </div>
-
-                <!-- Demographics Card -->
-                <div class="demographics-card">
-                    <h3><i class="fas fa-user"></i> Patient Profile</h3>
+                <div class="card demographics-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-user-circle"></i> Patient Demographics</h3>
+                    </div>
                     <div class="demographics-grid">
                         <div class="demo-item">
-                            <span class="demo-label">Age</span>
-                            <span class="demo-value" id="demoAge">--</span>
+                            <div class="demo-icon"><i class="fas fa-calendar-alt"></i></div>
+                            <div>
+                                <span class="demo-label">Age</span>
+                                <div class="demo-value" id="demoAge">N/A</div>
+                            </div>
                         </div>
                         <div class="demo-item">
-                            <span class="demo-label">Gender</span>
-                            <span class="demo-value" id="demoGender">--</span>
+                            <div class="demo-icon"><i class="fas fa-venus-mars"></i></div>
+                            <div>
+                                <span class="demo-label">Gender</span>
+                                <div class="demo-value" id="demoGender">N/A</div>
+                            </div>
                         </div>
                         <div class="demo-item">
-                            <span class="demo-label">Smoker</span>
-                            <span class="demo-value" id="demoSmoker">--</span>
+                            <div class="demo-icon"><i class="fas fa-smoking"></i></div>
+                            <div>
+                                <span class="demo-label">Smoker</span>
+                                <div class="demo-value" id="demoSmoker">No</div>
+                            </div>
                         </div>
                     </div>
-                    <p class="demo-disclaimer">
-                        <i class="fas fa-info-circle"></i>
-                        Demographics extracted from document. Verify accuracy.
-                    </p>
                 </div>
             </div>
         </section>
 
-        <!-- Chat Section (ChatGPT Style) -->
+        <!-- ======================================== -->
+        <!-- CHAT SECTION -->
+        <!-- ======================================== -->
         <section class="content-section" id="chatSection">
             <div class="chat-container">
-                <!-- Chat Messages -->
+                <div class="chat-header-bar">
+                    <div class="chat-header-left">
+                        <div class="chat-avatar"><i class="fas fa-robot"></i></div>
+                        <div>
+                            <h3>MedRAG Clinical Assistant</h3>
+                            <span class="chat-status"><span class="status-dot online"></span> Online</span>
+                        </div>
+                    </div>
+                    <button class="btn-icon" onclick="clearChat()" title="Clear Chat"><i class="fas fa-trash-alt"></i></button>
+                </div>
                 <div class="chat-messages" id="chatMessages">
                     <div class="chat-message bot">
-                        <div class="message-avatar">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <div class="message-bubble">
-                            <p>👋 Hello! I'm MedRAG Assistant. Upload a medical document and I'll help you understand it. Ask me anything about your health report!</p>
-                        </div>
+                        <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                        <div class="message-bubble">👋 Hello! I'm your MedRAG AI assistant. Upload a medical document and ask me anything about it.</div>
                     </div>
                 </div>
-
-                <!-- Suggested Questions -->
-                <div class="chat-suggestions" id="chatSuggestions">
-                    <span class="suggestion-chip" onclick="askQuestion('What is the main diagnosis?')">
-                        <i class="fas fa-stethoscope"></i> Main diagnosis?
-                    </span>
-                    <span class="suggestion-chip" onclick="askQuestion('What medications are prescribed?')">
-                        <i class="fas fa-pills"></i> Medications?
-                    </span>
-                    <span class="suggestion-chip" onclick="askQuestion('What are the key findings?')">
-                        <i class="fas fa-search"></i> Key findings?
-                    </span>
-                    <span class="suggestion-chip" onclick="askQuestion('What follow-up is recommended?')">
-                        <i class="fas fa-calendar-check"></i> Follow-up?
-                    </span>
-                </div>
-
-                <!-- Chat Input -->
+                <div class="chat-suggestions" id="chatSuggestions"></div>
                 <div class="chat-input-area">
                     <div class="chat-input-wrapper">
-                        <input type="text" id="chatInput" placeholder="Ask about your medical document..." 
-                               onkeypress="if(event.key === 'Enter') sendMessage()">
-                        <button class="send-btn" onclick="sendMessage()">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
+                        <input type="text" id="chatInput" placeholder="Ask a medical question...">
+                        <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
                     </div>
-                    <p class="chat-disclaimer">
-                        <i class="fas fa-shield-alt"></i>
-                        Responses are based on uploaded documents. Always consult a healthcare professional.
-                    </p>
                 </div>
             </div>
         </section>
 
-        <!-- Translate Section -->
+        <!-- ======================================== -->
+        <!-- TRANSLATE SECTION -->
+        <!-- ======================================== -->
         <section class="content-section" id="translateSection">
             <div class="translate-container">
-                <div class="translate-card">
+                <div class="card translate-card">
                     <div class="translate-header">
-                        <h2><i class="fas fa-language"></i> Translate Summary</h2>
-                        <p>Translate your medical summary into multiple languages</p>
+                        <div class="translate-icon"><i class="fas fa-globe"></i></div>
+                        <div>
+                            <h2>Medical Translation</h2>
+                            <p>Translate your medical summary to multiple languages with clinical accuracy</p>
+                        </div>
+                    </div>
+                    <div class="translate-help">
+                        Select a language below to translate the current summary. Medical terms and numbers are preserved for accuracy.
                     </div>
                     <div class="language-grid">
-                        <button class="lang-btn" onclick="translateTo('hi')">
-                            <span class="lang-flag">🇮🇳</span>
-                            <span class="lang-name">Hindi</span>
-                        </button>
-                        <button class="lang-btn" onclick="translateTo('ta')">
-                            <span class="lang-flag">🇮🇳</span>
-                            <span class="lang-name">Tamil</span>
-                        </button>
-                        <button class="lang-btn" onclick="translateTo('te')">
-                            <span class="lang-flag">🇮🇳</span>
-                            <span class="lang-name">Telugu</span>
-                        </button>
-                        <button class="lang-btn" onclick="translateTo('kn')">
-                            <span class="lang-flag">🇮🇳</span>
-                            <span class="lang-name">Kannada</span>
-                        </button>
-                        <button class="lang-btn" onclick="translateTo('ml')">
-                            <span class="lang-flag">🇮🇳</span>
-                            <span class="lang-name">Malayalam</span>
-                        </button>
-                        <button class="lang-btn" onclick="translateTo('es')">
-                            <span class="lang-flag">🇪🇸</span>
-                            <span class="lang-name">Spanish</span>
-                        </button>
-                        <button class="lang-btn" onclick="translateTo('fr')">
-                            <span class="lang-flag">🇫🇷</span>
-                            <span class="lang-name">French</span>
-                        </button>
-                        <button class="lang-btn" onclick="translateTo('de')">
-                            <span class="lang-flag">🇩🇪</span>
-                            <span class="lang-name">German</span>
-                        </button>
+                        <button class="lang-btn" onclick="translateTo('hi')"><span class="lang-flag">🇮🇳</span><span class="lang-name">Hindi</span></button>
+                        <button class="lang-btn" onclick="translateTo('ta')"><span class="lang-flag">🇮🇳</span><span class="lang-name">Tamil</span></button>
+                        <button class="lang-btn" onclick="translateTo('te')"><span class="lang-flag">🇮🇳</span><span class="lang-name">Telugu</span></button>
+                        <button class="lang-btn" onclick="translateTo('kn')"><span class="lang-flag">🇮🇳</span><span class="lang-name">Kannada</span></button>
+                        <button class="lang-btn" onclick="translateTo('ml')"><span class="lang-flag">🇮🇳</span><span class="lang-name">Malayalam</span></button>
                     </div>
                     <div class="translated-content" id="translatedContent">
-                        <div class="empty-state">
-                            <i class="fas fa-language"></i>
-                            <p>Select a language to translate your summary</p>
+                        <div class="empty-state small">
+                            <div class="empty-icon"><i class="fas fa-language"></i></div>
+                            <h3>No Content to Translate</h3>
+                            <p>Upload and analyze a medical document first, then select a language above.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+        <!-- ======================================== -->
+<!-- PROFILE SECTION -->
+<!-- ======================================== -->
+<section class="content-section" id="profileSection">
+    <div class="profile-container">
+        <!-- Profile Card -->
+        <div class="card profile-info-card">
+            <div class="card-header">
+                <h3><i class="fas fa-user-circle"></i> Profile Information</h3>
+            </div>
+            <div class="profile-content">
+                <div class="profile-avatar-section">
+                    <div class="profile-avatar-large">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="profile-details">
+                        <h2 id="profileFullName">Loading...</h2>
+                        <p id="profileEmail">Loading...</p>
+                        <span class="profile-badge"><i class="fas fa-check-circle"></i> Verified</span>
+                    </div>
+                </div>
+                <div class="profile-stats-grid">
+                    <div class="profile-stat">
+                        <div class="pstat-icon"><i class="fas fa-calendar-alt"></i></div>
+                        <div>
+                            <span class="pstat-label">Member Since</span>
+                            <div class="pstat-value" id="profileMemberSince">--</div>
+                        </div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="pstat-icon"><i class="fas fa-clock"></i></div>
+                        <div>
+                            <span class="pstat-label">Last Login</span>
+                            <div class="pstat-value" id="profileLastLogin">--</div>
+                        </div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="pstat-icon"><i class="fas fa-file-medical"></i></div>
+                        <div>
+                            <span class="pstat-label">Documents</span>
+                            <div class="pstat-value" id="profileDocCount">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change Password Card -->
+        <div class="card password-card">
+            <div class="card-header">
+                <h3><i class="fas fa-lock"></i> Change Password</h3>
+            </div>
+            <div style="padding: 24px;">
+                <form id="changePasswordForm" onsubmit="handlePasswordChange(event)">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" class="form-input" required>
+                        <small class="form-help">Min 8 characters, must contain letters and numbers</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" id="confirmPassword" class="form-input" required>
+                    </div>
+                    <div id="passwordError" class="error-message" style="display:none;"></div>
+                    <div id="passwordSuccess" class="success-message" style="display:none;"></div>
+                    <button type="submit" class="btn-primary" id="changePasswordBtn">
+                        <i class="fas fa-key"></i> Change Password
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Account Actions Card -->
+        <div class="card account-actions-card">
+            <div class="card-header">
+                <h3><i class="fas fa-cog"></i> Account Actions</h3>
+            </div>
+            <div class="account-actions">
+                <button class="action-item" onclick="logout()">
+                    <div class="action-icon logout"><i class="fas fa-sign-out-alt"></i></div>
+                    <div class="action-text">
+                        <span class="action-name">Logout</span>
+                        <span class="action-desc">Sign out of your account</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
     </main>
 
     <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
+    <div class="toast-container"></div>
 
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loader">
             <div class="loader-spinner"></div>
-            <p id="loadingText">Processing...</p>
+            <p>Analyzing document...</p>
         </div>
     </div>
 

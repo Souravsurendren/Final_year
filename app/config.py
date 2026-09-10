@@ -34,5 +34,9 @@ RE_RANK_K = int(os.getenv("RE_RANK_K", 12))
 SUMMARIZE_BATCH_TOKENS = int(os.getenv("SUMMARIZE_BATCH_TOKENS", 3500))
 MODEL_FOR_SUMMARIZATION = os.getenv("GROK_MODEL", "llama3-8b-8192")
 
+# MongoDB Configuration
+MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
+MONGODB_DB_NAME = os.getenv("MONGODB_DB_NAME", "medrag")
+
 # Misc
 VERBOSE = os.getenv("VERBOSE", "1") == "1"
